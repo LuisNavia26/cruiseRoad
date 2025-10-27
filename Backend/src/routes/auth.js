@@ -7,23 +7,24 @@ const router = express.Router();
 
 //register
 router.post('/register', async (req, res) => {
-    const {username, email, password} = req.body;
+    const {firstname, lastname, username, password} = req.body;
     try{
-        if (!username || !email || !password){
+        if (!firstname || !lastname || !username || !password){
             return res.status(400).json({message: "please fill out all the fields"})
         }
-        const userExists = await User.findOne({email});
+        const userExists = await User.findOne({username});
         if (userExists){
-            return res.status(400).json({message: "user already exists"})
+            return res.status(400).json({message: "username already exists"})
         }
 
-        const user = await User.create({username, email, password});
+        const user = await User.create({firstname, lastname, username, password});
         const token = generateToken(user._id);
         res.status(201).json({
             id: user._id,
+            firstname: user.firstname,
+            lastname: user.lastname,
             username: user.username,
-            email: user.email,
-            token,
+            token
         });
     } catch (err){
         res.status(500).json({message: "server error"});
@@ -32,14 +33,14 @@ router.post('/register', async (req, res) => {
 
 //login
 router.post('/login', async (req, res) => {
-    const {email, password} = req.body;
+    const {username, password} = req.body;
     try {
-        if (!email || !password) {
+        if (!username || !password) {
             return res
                 .status(400)
                 .json({message: "please fill out all the fields"});
         }
-        const user = await User.findOne({email});
+        const user = await User.findOne({username});
 
         if(!user || !(await user.matchPassword(password))){
             return res
@@ -50,7 +51,6 @@ router.post('/login', async (req, res) => {
         res.status(200).json({
             id: user._id,
             username: user.username,
-            email: user.email,
             token,
             
         });

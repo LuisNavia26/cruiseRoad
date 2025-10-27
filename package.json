@@ -1,0 +1,13 @@
+{
+  "name": "cruise-road-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:backend": "npm --prefix Backend run dev",
+    "dev:frontend": "npm --prefix cruise-road run dev",
+    "dev": "concurrently \"npm --prefix Backend run dev\" \"npm --prefix cruise-road run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
