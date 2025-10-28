@@ -37,6 +37,7 @@ function Header() {
 
                 }
             }catch (error){
+                
                 setsuccessReg (false);
                 setErrorMsg ("An error occurred during registration. Please try again later.");
 
@@ -95,14 +96,16 @@ function Header() {
             <h2>Your personal road trip planner</h2>
             <nav>
                 <ul>
-                    <li style={{fontWeight: "bold"}}>{isLoggedIn ? 'WELCOME!' : 'LOGIN'}</li>
+                    <li style={{fontWeight: "bold"}}>{user ? 'WELCOME!' : 'LOGIN'}</li>
                     <li></li>
                 </ul>
             </nav>
 
             {/*Login*/}
 
-            <form style={{ marginTop: "20px", display: "inline-block", textAlign: "left" }} onSubmit={handleLog}> 
+            <form style={{ marginTop: "20px", display: "inline-block", textAlign: "left" }} 
+            onSubmit={handleLog}
+            > 
                 <div style={{ marginBottom: "10px" }}>
                     <label htmlFor="username">Username:</label><br />
                     <input type="text" value={formData.username} onChange={(e=>setFormData({...formData, username: e.target.value}))} />
@@ -111,7 +114,10 @@ function Header() {
                     <label htmlFor="password">Password:</label><br />
                     <input type="password" value={formData.password} onChange={(e=>setFormData({...formData, password: e.target.value}))} />
                 </div>
-            )}
+            
+                <button type="submit">Login</button>
+            </form>
+
 
             {errorMsg &&(
                 <p style={{ color: "red", fontWeight: "bold", marginTop: "10px" }}>
@@ -131,7 +137,7 @@ function Header() {
                 <div className={"popupOverlay"}>
                     <div className={"popupBox"}>
                         <h3>Create an Account</h3>
-                        <form onSubmit={handleRegister}>
+                        <form onSubmit={handleSub}>
                             <div style={{ marginBottom: "10px" }}>
                                 <label htmlFor="new-first-name">First Name:</label><br />
                                 <input 
