@@ -1,15 +1,19 @@
 import{ useState } from "react";
+import Dashboard from "./Dashboard";
+
 function Header() {
     const[showPopUp, setShowPopUp] = useState (false);
     const[successReg, setsuccessReg] = useState (false);
     const[errorMsg, setErrorMsg] = useState ("");
+    const[user, setUser] = useState (null);
     const[formData, setFormData] = useState ({
         firstName: "",
         lastName: "",
         username: "",
         password: ""
     });
-    const handleSub =(e)=>{
+    {/*Handling user registration*/}
+    const handleSub = async(e)=>{
         e.preventDefault();
         if(
             formData.firstName.trim() &&
@@ -17,13 +21,74 @@ function Header() {
             formData.username.trim() &&
             formData.password.trim()
         ){
-            setsuccessReg (true);
-            setErrorMsg ("");
+            try{
+                const res = await fetch ("http://localhost:5000/api/users/register", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(formData),
+                });
+                const infoData = await res.json();
+                if (res.ok){ 
+                    setsuccessReg (true);
+                    setErrorMsg ("");
+                }else{
+                    setsuccessReg (false);
+                    setErrorMsg (infoData.message);
+
+                }
+            }catch (error){
+                setsuccessReg (false);
+                setErrorMsg ("An error occurred during registration. Please try again later.");
+
+            }
+            
         }else{
             setsuccessReg (false);
             setErrorMsg ("All fields are required. Please fill in all fields." );
         }
     };
+
+    {/*Handling login of registered users*/}
+    const handleLog = async(e)=>{
+        e.preventDefault();
+        if (formData.username.trim() && formData.password.trim()){
+            try{
+                const res = await fetch ("http://localhost:5000/api/users/login", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        username: formData.username,
+                        password: formData.password,
+                    }),
+                });
+                const infoData = await res.json();
+                if (res.ok){
+                    setUser ({username: infoData.user|| formData.username});
+                    setErrorMsg ("");
+                }else{
+                    setErrorMsg ("Invalid credentials. Please try again.");
+                }
+            }catch (error){
+                setErrorMsg ("An error occurred during login. Please try again later.");
+            }
+        }else{
+            setErrorMsg ("Both username and password are required.");
+        }
+    };
+
+    const handleOut = () => {
+        setUser (null);
+        setFormData ({
+            firstName: "",
+            lastName: "",
+            username: "",
+            password: ""
+        });
+    }
+
+    if (user){
+        return <Dashboard user={user} isLogOut={handleOut} />;
+    }
     return (
         <header>    
             <h1>Cruise Road</h1>
@@ -37,7 +102,7 @@ function Header() {
 
             {/*Login*/}
 
-            <form style={{ marginTop: "20px", display: "inline-block", textAlign: "left" }}> 
+            <form style={{ marginTop: "20px", display: "inline-block", textAlign: "left" }} onSubmit={handleLog}> 
                 <div style={{ marginBottom: "10px" }}>
                     <label htmlFor="username">Username:</label><br />
                     <input type="text" value={formData.username} onChange={(e=>setFormData({...formData, username: e.target.value}))} />
@@ -48,6 +113,12 @@ function Header() {
                 </div>
                 <button type="submit">Login</button>
             </form>
+
+            {errorMsg &&(
+                <p style={{ color: "red", fontWeight: "bold", marginTop: "10px" }}>
+                    {errorMsg}
+                </p>
+            )}
 
             {/*Create an account*/}
             <div style={{ marginTop: "15px" }}>
@@ -83,8 +154,8 @@ function Header() {
                         </form>
                         {/*registration success*/}
                         {successReg && 
-                            (<p style={{color: "green", fontWeight : "bold", marginTop: "10px"}}
-                            >Registration successful!
+                            (<p style={{color: "green", fontWeight : "bold", marginTop: "10px"}}>
+                                Registration successful!
                             </p>
                             )}
                         {errorMsg &&(
