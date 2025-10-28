@@ -15,7 +15,7 @@ function Header() {
     {/*Handling user registration*/}
     const handleSub = async(e)=>{
         e.preventDefault();
-        if(
+        if (
             formData.firstName.trim() &&
             formData.lastName.trim() &&
             formData.username.trim() &&
@@ -95,7 +95,7 @@ function Header() {
             <h2>Your personal road trip planner</h2>
             <nav>
                 <ul>
-                    <li style={{fontWeight: "bold"}}>LOGIN</li>
+                    <li style={{fontWeight: "bold"}}>{isLoggedIn ? 'WELCOME!' : 'LOGIN'}</li>
                     <li></li>
                 </ul>
             </nav>
@@ -111,8 +111,7 @@ function Header() {
                     <label htmlFor="password">Password:</label><br />
                     <input type="password" value={formData.password} onChange={(e=>setFormData({...formData, password: e.target.value}))} />
                 </div>
-                <button type="submit">Login</button>
-            </form>
+            )}
 
             {errorMsg &&(
                 <p style={{ color: "red", fontWeight: "bold", marginTop: "10px" }}>
@@ -132,24 +131,44 @@ function Header() {
                 <div className={"popupOverlay"}>
                     <div className={"popupBox"}>
                         <h3>Create an Account</h3>
-                        <form onSubmit={handleSub}>
+                        <form onSubmit={handleRegister}>
                             <div style={{ marginBottom: "10px" }}>
                                 <label htmlFor="new-first-name">First Name:</label><br />
-                                <input type="text" value={formData.firstName} onChange={(e) =>setFormData({ ...formData, firstName: e.target.value })  } />
+                                <input 
+                                    type="text" 
+                                    id="new-first-name"
+                                    value={formData.firstName} 
+                                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} 
+                                />
                             </div>
                             <div style={{ marginBottom: "10px" }}>
                                 <label htmlFor="new-last-name">Last Name:</label><br />
-                                <input type="text" value={formData.lastName} onChange={(e) =>setFormData({ ...formData, lastName: e.target.value })  } />
+                                <input 
+                                    type="text" 
+                                    id="new-last-name"
+                                    value={formData.lastName} 
+                                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} 
+                                />
                             </div>
                             <div style={{ marginBottom: "10px" }}>
                                 <label htmlFor="new-username">Username:</label><br />
-                                <input type="text" value={formData.username} onChange={(e) =>setFormData({ ...formData, username: e.target.value })  } />
+                                <input 
+                                    type="text" 
+                                    id="new-username"
+                                    value={formData.username} 
+                                    onChange={(e) => setFormData({ ...formData, username: e.target.value })} 
+                                />
                             </div>
                             <div style={{ marginBottom: "10px" }}> 
                                 <label htmlFor="new-password">Password:</label><br />
-                                <input type="password" value={formData.password} onChange={(e) =>setFormData({ ...formData, password: e.target.value })  } />
+                                <input 
+                                    type="password" 
+                                    id="new-password"
+                                    value={formData.password} 
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })} 
+                                />
                             </div>
-                            <button type="Submit">Create Account</button>
+                            <button type="submit">Create Account</button>
                             
                         </form>
                         {/*registration success*/}
