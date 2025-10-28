@@ -22,10 +22,15 @@ function Header() {
             formData.password.trim()
         ){
             try{
-                const res = await fetch ("http://localhost:5000/api/users/register", {
+                const res = await fetch ("/api/users/register", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify({
+                        firstname: formData.firstName,
+                        lastname: formData.lastName,
+                        username: formData.username,
+                        password: formData.password,
+                    }),
                 });
                 const infoData = await res.json();
                 if (res.ok){ 
@@ -54,7 +59,7 @@ function Header() {
         e.preventDefault();
         if (formData.username.trim() && formData.password.trim()){
             try{
-                const res = await fetch ("http://localhost:5000/api/users/login", {
+                const res = await fetch ("/api/users/login", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({
