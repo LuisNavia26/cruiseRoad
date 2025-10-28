@@ -4,11 +4,11 @@ import jwt from 'jsonwebtoken';
 export const protect = async (req, res, next) => {
     let token;
     
-    if (req.headers.authorization && req.headers.authorization.startsWith("bearer")){
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
         try{
         token = req.headers.authorization.split(" ")[1];
 
-        const decoded = jwt.verify(token, process.env.JWT_Secret)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
         req.user = await User.findById(decoded.id).select("-password")
 
@@ -21,4 +21,3 @@ export const protect = async (req, res, next) => {
     return res.status(401).json({message: "not authorized, token failed"})
 }
 
-//Authorization: bearer <token>
