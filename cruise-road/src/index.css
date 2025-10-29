@@ -35,10 +35,11 @@ body {
   flex-direction: column;
   min-height: 100vh;
  
-  background-image: url('https://static.vecteezy.com/system/resources/previews/032/512/591/non_2x/green-mountain-landscape-illustration-silhouette-of-mountain-range-with-clear-sky-mountain-landscape-for-background-wallpaper-or-landing-page-free-vector.jpg');
+  /* background-image: url('https://static.vecteezy.com/system/resources/previews/032/512/591/non_2x/green-mountain-landscape-illustration-silhouette-of-mountain-range-with-clear-sky-mountain-landscape-for-background-wallpaper-or-landing-page-free-vector.jpg'); */
   background-size: cover; 
   background-position: center;
   background-repeat: no-repeat;
+  transition: background-image 0.8s ease-in-out;
 
   color: rgba(255, 255, 255, 0.87);
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -98,33 +99,42 @@ footer{
 .closeButton:hover {
   background-color: #535bf2;
 }
-.Dashboard {
-  background-image: url(https://media1.thehungryjpeg.com/thumbs2/ori_3904105_10u1au3eu0qd98f16r4qhdwzs9u6pezwzy1kwpva_mountain-range-outline-nature-drawing-pencil-sketch-rocky-peaks-pano.jpg);
-  padding: 40 px;
-  border-radius: 12 px;
-  width: 80%;
-  margin: 80n px auto;
+.dashboard {
+  /* background-image: url('https://media1.thehungryjpeg.com/thumbs2/ori_3904105_10u1au3eu0qd98f16r4qhdwzs9u6pezwzy1kwpva_mountain-range-outline-nature-drawing-pencil-sketch-rocky-peaks-pano.jpg'); */
+  position: relative;
   text-align: center;
-
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  
 }
 
-.Dashboard h1 {
+.dashboard h1 {
     font-size: 2.2em;
 }
 
-.Dashboard h2 {
+.dashboard h2 {
     font-size: 1.5em;
     margin-top: 25px;
 }
 
-.Dashboard button {
-    background-color: #28a745;
+.dashboard button {
+    position: absolute;
     color: white;
     border: none;
     border-radius: 8px;
     padding: 10px 20px;
     cursor: pointer;
     font-size: 1em;
+    top: 20px;
+    right: 20px;
+  
+
 }
 
 button {
