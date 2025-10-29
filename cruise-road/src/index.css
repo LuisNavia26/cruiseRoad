@@ -35,7 +35,6 @@ body {
   flex-direction: column;
   min-height: 100vh;
  
-  /* background-image: url('https://static.vecteezy.com/system/resources/previews/032/512/591/non_2x/green-mountain-landscape-illustration-silhouette-of-mountain-range-with-clear-sky-mountain-landscape-for-background-wallpaper-or-landing-page-free-vector.jpg'); */
   background-size: cover; 
   background-position: center;
   background-repeat: no-repeat;
@@ -100,7 +99,6 @@ footer{
   background-color: #535bf2;
 }
 .dashboard {
-  /* background-image: url('https://media1.thehungryjpeg.com/thumbs2/ori_3904105_10u1au3eu0qd98f16r4qhdwzs9u6pezwzy1kwpva_mountain-range-outline-nature-drawing-pencil-sketch-rocky-peaks-pano.jpg'); */
   position: relative;
   text-align: center;
   color: black;
