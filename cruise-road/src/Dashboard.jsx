@@ -51,7 +51,7 @@ function Dashboard({user, isLogOut}) {
                  backgroundColor: "rgba(8, 114, 41, 0.88)",
                  borderRadius: "6px",}}
             >
-                Start PLanning Here!
+                Start Planning Here!
             </button>
             </div>   
             </div>
