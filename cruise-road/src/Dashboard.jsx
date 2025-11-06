@@ -59,10 +59,6 @@ function Dashboard({user, isLogOut}) {
                 borderRadius: "6px"}}
                 >
                 Welcome, {user.username}!</h1>
-            <div>
-                <button onClick={isLogOut}>Log Out</button>
-
-            </div>
             <div style={{ textAlign:"center", display: "inline-block",backgroundColor: "rgba(255, 255, 255, 0.88)",color: "black",padding: "10px 15px",borderRadius: "6px",}}>
                 <h2>Plan your next road trip!</h2>
             </div>
