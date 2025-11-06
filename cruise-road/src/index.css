@@ -166,3 +166,54 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.menu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: rgba(255, 251, 251, 0.8);
+    /* border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; */
+    z-index: 1500;
+}
+
+.menuDropdown {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: rgba(225, 225,225, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    width: 160px;
+    display: flex;
+    flex-direction: column;
+    /* gap: 10px; */
+    z-index: 1500;
+    text-align: left;
+}
+
+.menuItem {
+  background: none;
+  border: none;
+  padding: 10px;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  color: black;
+  display: block;
+  width: 100%;
+}
+
+.menuItem:hover {
+  background: rgba(0,0,0,0.1);
+}
+/* .menuItem:not(:last-child) {
+  margin-bottom: 8px;
+} */
