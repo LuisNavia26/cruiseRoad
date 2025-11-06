@@ -48,7 +48,6 @@ function Dashboard({user, isLogOut}) {
                     <a className="menuItem" href="#" onClick={(e) => {e.preventDefault();isLogOut();}}>
                         Log Out
                     </a>
-                    {/* <button className="menuItem" onClick={isLogOut}>Log Out</button> */}
                 </div>
             )}
             <h1 style={{
@@ -127,7 +126,13 @@ function Dashboard({user, isLogOut}) {
                         <h3>LET THE ROADTRIPPING START HERE</h3>
                         <form onSubmit={handleSub}>
                             <div style={{ marginBottom: "10px" }}>
-                                <label htmlFor="destination"style={{backgroundColor:"rgba(0,0,0,0.4)",color:"white"}}>Where are we going?:</label><br />
+                                <label htmlFor="destination"style={{display: "block",
+                                    color: "#fff",                     
+                                    WebkitTextStroke: "0.5px #000",    
+                                    textShadow:                        
+                                        "1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000",
+                                    fontWeight: 700,
+                                    letterSpacing: "0.3px"}}>Where are we going?</label><br />
                                 <input 
                                     type="text" 
                                     id="destination"
@@ -138,7 +143,14 @@ function Dashboard({user, isLogOut}) {
                             </div>
 
                             <div style={{ marginBottom: "10px" }}>
-                                <label htmlFor="start"style={{backgroundColor:"rgba(0,0,0,0.4)",color:"white"}}>Where are leaving from? :</label><br />
+                                <label htmlFor="start"style={{display: "block",
+                                    color: "#fff",                     
+                                    WebkitTextStroke: "0.5px #000",    
+                                    textShadow:                        
+                                        "1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000",
+                                    fontWeight: 700,
+                                    letterSpacing: "0.3px"}}>
+                                Where are leaving from?:</label><br />
                                 <input 
                                     type="text" 
                                     id="start"
@@ -148,9 +160,14 @@ function Dashboard({user, isLogOut}) {
                                         setFormData((s)=>({ ...s, start: e.target.value }))}                            
                                 />
                             </div>
-                            <label style={{display:"block",backgroundColor:"rgba(0,0,0,0.4)",color:"white"}}>
-                                ️What Type of Vehicle are we driving? :
-                                  </label>
+                            <label style={{display: "block",
+                                color: "#fff",                     
+                                WebkitTextStroke: "0.5px #000",    
+                                textShadow:                        
+                                    "1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000",
+                                fontWeight: 700,
+                                letterSpacing: "0.3px"}}>
+                                ️What Type of Vehicle are we driving?</label>
                             <select 
                                 name="Car Type" 
                                 value={CarType} onChange={event => handleCategoryChange(event.target.value)}
