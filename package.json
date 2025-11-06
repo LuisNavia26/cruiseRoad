@@ -9,5 +9,9 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
+  },
+  "dependencies": {
+    "@react-google-maps/api": "^2.20.7",
+    "@vis.gl/react-google-maps": "^1.7.1"
   }
 }

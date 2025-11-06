@@ -1,4 +1,18 @@
 import React, {useState} from "react";
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+
+const containerStyle = {
+    width: '50%',
+    height: '300px',
+    margin: '20px auto',
+    borderRadius: '8px',
+    boxShadow: '0 6px 18px rgba(0,0,0,0.15)'
+};
+
+const center = {
+    lat: 29.6516,
+    lng: -82.3248
+};
 
 function Dashboard({user, isLogOut}) {
     const [CarType, setCar] = React.useState('');
@@ -8,6 +22,7 @@ function Dashboard({user, isLogOut}) {
         destination: "",
         start: "",
     });
+    const position = { lat: 29.65, lng: -82.35 }; // Example coordinates (Gainesville, FL)
     /*Handling trip planning submission*/
     const handleSub = async(e)=>{
         e.preventDefault();
@@ -33,9 +48,27 @@ function Dashboard({user, isLogOut}) {
                 <button onClick={isLogOut}>Log Out</button>
 
             </div>
-            <div style={{marginTop:"40px", textAlign:"center", display: "inline-block",backgroundColor: "rgba(255, 255, 255, 0.88)",color: "black",padding: "10px 15px",borderRadius: "6px",}}>
+            <div style={{ textAlign:"center", display: "inline-block",backgroundColor: "rgba(255, 255, 255, 0.88)",color: "black",padding: "10px 15px",borderRadius: "6px",}}>
                 <h2>Plan your next road trip!</h2>
             </div>
+
+            {/* Google Map */}
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+                <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+                    <GoogleMap
+                        mapContainerStyle={containerStyle}
+                        center={center}
+                        zoom={10}
+                        options={{
+                            disableDefaultUI: false,
+                            zoomControl: true
+                        }}
+                    >
+                        <Marker position={center} />
+                    </GoogleMap>
+                </LoadScript>
+            </div>
+
         {/*Start Your Trip*/}
             <div style={{ marginTop: "15px" }}
             >
@@ -44,7 +77,7 @@ function Dashboard({user, isLogOut}) {
             onClick={()=>{setShowPopUp(true);
                 setErrorMsg("");
             }}
-            style={{marginTop:"490px",
+            style={{marginTop:"600px",
                  right:"43.5%",
                  textAlign:"center", 
                  display: "inline-block",
