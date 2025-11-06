@@ -59,7 +59,7 @@ function Dashboard({user, isLogOut}) {
                 borderRadius: "6px"}}
                 >
                 Welcome, {user.username}!</h1>
-            {/* <div>
+            <div>
                 <button onClick={isLogOut}>Log Out</button>
 
             </div>
