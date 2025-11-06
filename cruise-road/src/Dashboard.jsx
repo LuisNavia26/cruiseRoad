@@ -18,6 +18,7 @@ function Dashboard({user, isLogOut}) {
     const [CarType, setCar] = React.useState('');
     const [showPopUp, setShowPopUp] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
+    const [menu, setOpenMenu] = useState (false);
     const [formData, setFormData] = useState({
         destination: "",
         start: "",
@@ -36,6 +37,20 @@ function Dashboard({user, isLogOut}) {
     return (
         <>
         <div className= "dashboard">
+            {/*Menu*/}
+            <div className="menu" onClick={()=>setOpenMenu(!menu)}>
+                ☰
+            </div>
+            {menu && (
+                <div className="menuDropdown">
+                    <a className="menuItem" href="/profile">Profile</a>
+                    <a className="menuItem" href="/saved-trips">Saved Trips</a>
+                    <a className="menuItem" href="#" onClick={(e) => {e.preventDefault();isLogOut();}}>
+                        Log Out
+                    </a>
+                    {/* <button className="menuItem" onClick={isLogOut}>Log Out</button> */}
+                </div>
+            )}
             <h1 style={{
                 display: "inline-block",
                 backgroundColor: "rgba(255,255,255,0.88)",
@@ -44,7 +59,7 @@ function Dashboard({user, isLogOut}) {
                 borderRadius: "6px"}}
                 >
                 Welcome, {user.username}!</h1>
-            <div>
+            {/* <div>
                 <button onClick={isLogOut}>Log Out</button>
 
             </div>
