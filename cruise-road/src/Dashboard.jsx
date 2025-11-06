@@ -117,6 +117,8 @@ function Dashboard({user, isLogOut}) {
                                 <option id="2" >Truck</option>
                                 <option id="3" >Minivan</option>
                                 <option id="4" >Electric</option>
+                                <option id="5">Hybrid</option>
+                                <option id="6">Motorcycle</option>
                                 </select>
                            
                         {errorMsg &&(
