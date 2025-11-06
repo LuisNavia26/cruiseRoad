@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 
 function Dashboard({user, isLogOut}) {
+    const [CarType, setCar] = React.useState('');
     const [showPopUp, setShowPopUp] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [formData, setFormData] = useState({
@@ -17,7 +18,6 @@ function Dashboard({user, isLogOut}) {
         setErrorMsg(""); //Not actual error handling yet, just for show, for now
         setShowPopUp(false);
     };
-    
     return (
         <>
         <div className= "dashboard">
@@ -104,6 +104,21 @@ function Dashboard({user, isLogOut}) {
                                         setFormData((s)=>({ ...s, start: e.target.value }))}                            
                                 />
                             </div>
+                            <label style={{display:"block",backgroundColor:"rgba(0,0,0,0.4)",color:"white"}}>
+                                ️What Type of Vehicle are we driving? :
+                                  </label>
+                            <select 
+                                name="Car Type" 
+                                value={CarType} onChange={event => handleCategoryChange(event.target.value)}
+                                style={{ color: "#9CA3AF"}}>
+                                <option id ="" >--Please choose an option--</option>
+                                <option id="0" >SUV</option>
+                                <option id="1" >Sports Car</option>
+                                <option id="2" >Truck</option>
+                                <option id="3" >Minivan</option>
+                                <option id="4" >Electric</option>
+                                </select>
+                           
                         {errorMsg &&(
                             <p style={{ backgroundColor:"rgba(245, 236, 195, 1)",color: "red", fontWeight: "bold", marginTop: "10px" }}>
                                 {errorMsg}
