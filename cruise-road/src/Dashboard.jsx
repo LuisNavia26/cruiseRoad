@@ -48,7 +48,6 @@ function Dashboard({user, isLogOut}) {
                     <a className="menuItem" href="#" onClick={(e) => {e.preventDefault();isLogOut();}}>
                         Log Out
                     </a>
-                    {/* <button className="menuItem" onClick={isLogOut}>Log Out</button> */}
                 </div>
             )}
             <h1 style={{
