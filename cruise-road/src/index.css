@@ -175,11 +175,6 @@ button:focus-visible {
     font-weight: bold;
     cursor: pointer;
     background-color: rgba(255, 251, 251, 0.8);
-    /* border-radius: 8px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px; */
     z-index: 1500;
 }
 
@@ -214,6 +209,52 @@ button:focus-visible {
 .menuItem:hover {
   background: rgba(0,0,0,0.1);
 }
-/* .menuItem:not(:last-child) {
-  margin-bottom: 8px;
-} */
+
+.popupProfileOverlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+}
+.popupProfileBox {
+  position: relative;
+  background-image: url("https://media.istockphoto.com/id/2007820086/vector/mountain-road-landscape.jpg?s=612x612&w=0&k=20&c=WjAGQRYNz2opPc75Sv3auZ0v8rV1iKtIMQxdtKEGRkE=");
+  background-size: cover;
+  background-position: center;
+  padding: 10px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  width: 600px;
+  height: 400px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  -webkit-text-fill-color: #000000;
+}
+.passwordChangeButton{
+  background-color: rgb(93, 93, 244);
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.deleteButton{
+  background-color: #fa6464;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}

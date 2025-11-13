@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import Profile from "./Profile.jsx";
 
 const containerStyle = {
     width: '50%',
@@ -19,6 +20,7 @@ function Dashboard({user, isLogOut}) {
     const [showPopUp, setShowPopUp] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [menu, setOpenMenu] = useState (false);
+    const [profile, setProfile] = useState(false);
     const [formData, setFormData] = useState({
         destination: "",
         start: "",
@@ -43,7 +45,9 @@ function Dashboard({user, isLogOut}) {
             </div>
             {menu && (
                 <div className="menuDropdown">
-                    <a className="menuItem" href="/profile">Profile</a>
+                    <a className="menuItem" href="/profile"onClick={(e) => {e.preventDefault();setProfile(true);setOpenMenu(false);}}>
+                        Profile
+                    </a>
                     <a className="menuItem" href="/saved-trips">Saved Trips</a>
                     <a className="menuItem" href="#" onClick={(e) => {e.preventDefault();isLogOut();}}>
                         Log Out
@@ -98,6 +102,9 @@ function Dashboard({user, isLogOut}) {
             </button>
             </div>   
             </div>
+        {profile && (
+            <Profile user={user} closeWindow={() => setProfile(false)} />
+        )}
             {/* Pop up for Planning Trip */}
             {showPopUp && (
                 <div className={"popupOverlay"}>
