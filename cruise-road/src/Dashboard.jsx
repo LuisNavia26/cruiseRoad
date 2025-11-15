@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import Profile from "./Profile.jsx";
 
 const containerStyle = {
@@ -27,6 +27,11 @@ function Dashboard({user, isLogOut}) {
         start: "",
     });
     const position = { lat: 29.65, lng: -82.35 }; // Example coordinates (Gainesville, FL)
+    const { isLoaded, loadError} = useJsApiLoader({
+        id: 'gmaps-script',
+        googleMapsApiKey:import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+    });
+    console.log("API Loaded:", isLoaded, "Load Error:", loadError?.message);
     /*Handling trip planning submission*/
     const handleSub = async(e)=>{
         e.preventDefault();
@@ -127,19 +132,18 @@ function Dashboard({user, isLogOut}) {
                         </button>
                     </div>
                 )}
-                <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-                    <GoogleMap
-                        mapContainerStyle={containerStyle}
-                        center={center}
-                        zoom={10}
-                        options={{
-                            disableDefaultUI: false,
-                            zoomControl: true
-                        }}
-                    >
-                        <Marker position={center} />
-                    </GoogleMap>
-                </LoadScript>
+                {loadError && (
+        <div style={{ color: 'red', fontWeight: 600 }}>
+          Map load error: {loadError.message}
+        </div>
+      )}
+      {!isLoaded ? (
+        <div>Loading map…</div>
+      ) : (
+        <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
+          <Marker position={center} />
+        </GoogleMap>
+      )}
             </div>
 
         {/*Start Your Trip*/}
@@ -248,6 +252,7 @@ function Dashboard({user, isLogOut}) {
                                 <option value="Electric" >Electric</option>
                                 <option value="Hybrid">Hybrid</option>
                                 <option value="Motorcycle">Motorcycle</option>
+                                <option value="RV">RV</option>
                                 </select>
                            
                         {errorMsg &&(
