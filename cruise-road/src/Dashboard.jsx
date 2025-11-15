@@ -101,9 +101,13 @@ function Dashboard({user, isLogOut}) {
                             <p style={{ margin: '0', fontSize: '13px', color: '#ccc' }}>{CarType }</p>
                         </div>
                         <div style={{ marginBottom: '15px' }}>
-                            <p style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '12px' }}>ESTIMATED DISTANCE:</p>
-                            <p style={{ margin: '0', fontSize: '13px', color: '#ccc' }}>XXX miles</p>
+                            <label style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '10px', width:'0' }}>ESTIMATED DISTANCE:</label>
+                            <label style={{ fontSize: '10px', color: '#ccc' }}> XXX miles</label>
                         </div>
+                        <div style={{ marginBottom: '0' }}>
+                            <label style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '10px', width:'0' }}>ESTIMATED GAS SPENDING:</label>
+                            <label style={{ fontSize: '10px', color: '#ccc' }}> XXX$</label>
+                        </div><br />
                         <hr style={{ borderColor: 'rgba(255, 255, 255, 0.3)', margin: '15px 0' }} />
                         <button 
                             onClick={() => setTripStarted(false)}
