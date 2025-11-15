@@ -2,9 +2,9 @@ import React, {useState} from "react";
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 const containerStyle = {
-    width: '50%',
-    height: '300px',
-    margin: '20px auto',
+    width: '35%',
+    height: '350px',
+    margin: '1px auto',
     borderRadius: '8px',
     boxShadow: '0 6px 18px rgba(0,0,0,0.15)'
 };
@@ -15,10 +15,11 @@ const center = {
 };
 
 function Dashboard({user, isLogOut}) {
-    const [CarType, setCar] = React.useState('');
+    const [CarType, setCar] = useState("");
     const [showPopUp, setShowPopUp] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [menu, setOpenMenu] = useState (false);
+    const [tripStarted, setTripStarted] = useState(false);
     const [formData, setFormData] = useState({
         destination: "",
         start: "",
@@ -27,12 +28,13 @@ function Dashboard({user, isLogOut}) {
     /*Handling trip planning submission*/
     const handleSub = async(e)=>{
         e.preventDefault();
-        if (!formData.destination || !formData.start){
+        if (!formData.destination || !formData.start || !CarType){
             setErrorMsg("Please fill out all the fields.");
             return;
         }
         setErrorMsg(""); //Not actual error handling yet, just for show, for now
         setShowPopUp(false);
+        setTripStarted(true);
     };
     return (
         <>
@@ -63,7 +65,60 @@ function Dashboard({user, isLogOut}) {
             </div>
 
             {/* Google Map */}
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px', position: 'relative' }}>
+                {/* Transparent Sidebar Menu */}
+                {tripStarted && (
+                    <div style={{
+                        position: 'absolute',
+                        left: '10px',
+                        top: '0',
+                        width: '200px',
+                        height: '350px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        backdropFilter: 'blur(5px)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        overflowY: 'auto',
+                        zIndex: 10,
+                        color: 'white',
+                        fontFamily: 'inherit'
+                    }}>
+                        <h3 style={{ marginTop: '0', marginBottom: '15px', fontSize: '16px' }}>Trip Details</h3>
+                        <div style={{ marginBottom: '15px' }}>
+                            <p style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '12px' }}>FROM:</p>
+                            <p style={{ margin: '0', fontSize: '13px', color: '#ccc' }}>{formData.start}</p>
+                        </div>
+                        <div style={{ marginBottom: '15px' }}>
+                            <p style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '12px' }}>TO:</p>
+                            <p style={{ margin: '0', fontSize: '13px', color: '#ccc' }}>{formData.destination}</p>
+                        </div>
+                        <div style={{ marginBottom: '15px' }}>
+                            <p style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '12px' }}>VEHICLE:</p>
+                            <p style={{ margin: '0', fontSize: '13px', color: '#ccc' }}>{CarType }</p>
+                        </div>
+                        <div style={{ marginBottom: '15px' }}>
+                            <p style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '12px' }}>ESTIMATED DISTANCE:</p>
+                            <p style={{ margin: '0', fontSize: '13px', color: '#ccc' }}>XXX miles</p>
+                        </div>
+                        <hr style={{ borderColor: 'rgba(255, 255, 255, 0.3)', margin: '15px 0' }} />
+                        <button 
+                            onClick={() => setTripStarted(false)}
+                            style={{
+                                width: '83%',
+                                padding: '8px 12px',
+                                backgroundColor: 'rgba(255, 255, 255, 0)',
+                                color: 'white',
+                                border: '1px solid rgba(255, 255, 255, 0.4)',
+                                borderRadius: '10px',
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                marginTop: '320px'
+                            }}
+                        >
+                            Close Menu
+                        </button>
+                    </div>
+                )}
                 <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
                     <GoogleMap
                         mapContainerStyle={containerStyle}
@@ -87,12 +142,14 @@ function Dashboard({user, isLogOut}) {
             onClick={()=>{setShowPopUp(true);
                 setErrorMsg("");
             }}
-            style={{marginTop:"600px",
+            style={{
+                 marginTop:"600px",
                  right:"43.5%",
                  textAlign:"center", 
                  display: "inline-block",
                  backgroundColor: "rgba(8, 114, 41, 0.88)",
-                 borderRadius: "6px",}}
+                 borderRadius: "6px",
+                cursor: "pointer",}}
             >
                 Start Planning Here!
             </button>
@@ -169,17 +226,17 @@ function Dashboard({user, isLogOut}) {
                                 letterSpacing: "0.3px"}}>
                                 ️What Type of Vehicle are we driving?</label>
                             <select 
-                                name="Car Type" 
-                                value={CarType} onChange={event => handleCategoryChange(event.target.value)}
+                                value={CarType} 
+                                onChange={(e) => setCar(e.target.value)}
                                 style={{ color: "#9CA3AF"}}>
-                                <option id ="" >--Please choose an option--</option>
-                                <option id="0" >SUV</option>
-                                <option id="1" >Sports Car</option>
-                                <option id="2" >Truck</option>
-                                <option id="3" >Minivan</option>
-                                <option id="4" >Electric</option>
-                                <option id="5">Hybrid</option>
-                                <option id="6">Motorcycle</option>
+                                <option value ="" >--Please choose an option--</option>
+                                <option value="SUV" >SUV</option>
+                                <option value="Sports Car" >Sports Car</option>
+                                <option value="Truck" >Truck</option>
+                                <option value="Minivan" >Minivan</option>
+                                <option value="Electric" >Electric</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="Motorcycle">Motorcycle</option>
                                 </select>
                            
                         {errorMsg &&(
