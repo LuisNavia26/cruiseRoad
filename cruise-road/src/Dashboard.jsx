@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Marker, DirectionsRenderer } from '@react-google-maps/api';
 import Profile from "./Profile.jsx";
 
 const containerStyle = {
@@ -16,6 +16,8 @@ const center = {
 };
 
 function Dashboard({user, isLogOut}) {
+    const [directions, setDirections] = useState(null);
+    const [distance, setDistance] = useState("");
     const [CarType, setCar] = useState("");
     const [showPopUp, setShowPopUp] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -32,14 +34,63 @@ function Dashboard({user, isLogOut}) {
         googleMapsApiKey:import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     });
     console.log("API Loaded:", isLoaded, "Load Error:", loadError?.message);
+
     /*Handling trip planning submission*/
     const handleSub = async(e)=>{
         e.preventDefault();
-        if (!formData.destination || !formData.start || !CarType){
-            setErrorMsg("Please fill out all the fields.");
-            return;
-        }
-        setErrorMsg(""); //Not actual error handling yet, just for show, for now
+        if (formData.destination.trim() && formData.start.trim() && CarType){
+            try{
+                const res = await fetch ("/api/trips/plan-trip", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        destination: formData.destination,
+                        start      : formData.start,
+                        vehicleType: CarType,
+                    }),
+                });
+                const tripData = await res.json();
+                if (res.ok){ 
+                    console.log("Trip planned successfully:", tripData);
+                    setErrorMsg ("");
+                    // Request directions
+                    if (isLoaded && window.google) {
+                        const directionsService = new window.google.maps.DirectionsService();
+                        directionsService.route(
+                            {
+                                origin: formData.start,
+                                destination: formData.destination,
+                                travelMode: window.google.maps.TravelMode.DRIVING,
+                            },
+                            (result, status) => {
+                                console.log("Directions status:", status);
+                                if (status === window.google.maps.DirectionsStatus.OK) {
+                                    setDirections(result);
+                                    const leg = result.routes[0]?.legs[0];
+                                    if (leg?.distance?.text){
+                                        setDistance(leg.distance.text);
+                                    }
+                                    console.log("Route set successfully");
+                                } else {
+                                    console.error(`Directions error: ${status}`);
+                                    setErrorMsg(`Could not calculate directions: ${status}`);
+                                }
+                            }
+                        );
+                    } else {
+                        console.error("Google Maps API not loaded");
+                        setErrorMsg("Google Maps API not loaded. Please refresh the page.");
+                    }
+                }else{
+                    setErrorMsg (tripData.message || "Failed to plan trip");
+                }
+             }catch (error){
+                console.error("Error:", error);
+                setErrorMsg ("An error occurred during trip planning. Please try again later.");
+             }
+            }else{
+                setErrorMsg ("All fields are required. Please fill in all fields." );
+            }
         setShowPopUp(false);
         setTripStarted(true);
     };
@@ -107,7 +158,7 @@ function Dashboard({user, isLogOut}) {
                         </div>
                         <div style={{ marginBottom: '15px' }}>
                             <label style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '10px', width:'0' }}>ESTIMATED DISTANCE:</label>
-                            <label style={{ fontSize: '10px', color: '#ccc' }}> XXX miles</label>
+                            <label style={{ fontSize: '10px', color: '#ccc' }}> {distance || "Caclulating..."}</label>
                         </div>
                         <div style={{ marginBottom: '0' }}>
                             <label style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '10px', width:'0' }}>ESTIMATED GAS SPENDING:</label>
@@ -140,8 +191,14 @@ function Dashboard({user, isLogOut}) {
       {!isLoaded ? (
         <div>Loading map…</div>
       ) : (
-        <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
-          <Marker position={center} />
+        <GoogleMap 
+            mapContainerStyle={containerStyle} 
+            center={center} 
+            zoom={10}>
+            {directions && (
+                <DirectionsRenderer directions={directions} />
+            )}
+            <Marker position={center} />
         </GoogleMap>
       )}
             </div>
@@ -170,6 +227,7 @@ function Dashboard({user, isLogOut}) {
         {profile && (
             <Profile user={user} closeWindow={() => setProfile(false)} />
         )}
+
             {/* Pop up for Planning Trip */}
             {showPopUp && (
                 <div className={"popupOverlay"}>
@@ -255,14 +313,16 @@ function Dashboard({user, isLogOut}) {
                                 <option value="RV">RV</option>
                                 </select>
                            
-                        {errorMsg &&(
-                            <p style={{ backgroundColor:"rgba(245, 236, 195, 1)",color: "red", fontWeight: "bold", marginTop: "10px" }}>
+                            {errorMsg &&(
+                                <p style={{ backgroundColor:"rgba(245, 236, 195, 1)",color: "red", fontWeight: "bold", marginTop: "10px" }}>
                                 {errorMsg}
-                            </p>
-                        )}
-            <div style={{marginTop:"30px", textAlign:"Center", display: "inline-block",color: "black",padding: "10px 15px",borderRadius: "6px",}}>
-                            <button type="submit">Lets Plan!</button>
-                         </div>
+                                </p>
+                            )}
+                            <div style={{marginTop:"30px", textAlign:"Center", display: "inline-block",color: "black",padding: "10px 15px",borderRadius: "6px",}}>
+                                <button type="submit">Lets Plan!</button>
+                            </div>
+                           
+
                     </form>
                 </div>
             </div>
