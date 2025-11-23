@@ -40,7 +40,7 @@ function Dashboard({user, isLogOut}) {
         e.preventDefault();
         if (formData.destination.trim() && formData.start.trim() && CarType){
             try{
-                const res = await fetch ("/api/trips/plan-trip", {
+                const res = await fetch ("/api/trips/plan", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({

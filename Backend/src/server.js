@@ -16,7 +16,6 @@ app.get("/", (req, res) => {
 });
 
 app.use(express.json());
-
 app.use("/api/users", authRoutes);
 app.use("/api/trips", tripRoutes);
 app.use((err, _req, res, _next) => { // This is to so we can see the real error messages
