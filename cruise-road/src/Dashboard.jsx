@@ -203,7 +203,7 @@ function Dashboard({user, isLogOut}) {
             center={center} 
             zoom={10}>
             {directions && <DirectionsRenderer directions={directions} />}
-            <Marker position={center} />
+            <Marker position={position} />
             {stops.map((stop, index) => {
                 const position = stop.location ? { lat: stop.location.lat, lng: stop.location.lng } : { lat: stop.lat, lng: stop.lng };
                 return <Marker key={stop.placeId || index} position={position} />;
