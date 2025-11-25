@@ -1,11 +1,24 @@
 import express from 'express';
+import {planTrip} from '../Services/googlemapsfunctions.js';
 
 const router = express.Router();
 
-router.post('/plan-trip', async (req, res) => {
-  const { destination, start, vehicleType } = req.body;
-  console.log("Received trip planning request:", { destination, start, vehicleType });
-  res.json({ ok: true });
+router.post('/api/trips', async (req, res, next) => {
+    try{
+        const { destination, start, vehicleType } = req.body;
+        console.log("Received trip planning request:", { destination, start, vehicleType });
+        const results = await planTrip({start, destination, vehicleType});
+        return res.json({
+            distance: results.distance,
+            duration: results.duration,
+            polyline: results.polyline,
+            stops: results.stops,
+        });
+    } catch (error){
+        console.error('Error in /api/trips/plan:', error);
+        next (error);
+    }
+
 });
 
 export default router;
