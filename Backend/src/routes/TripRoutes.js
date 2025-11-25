@@ -3,15 +3,15 @@ import {planTrip} from '../Services/googlemapsfunctions.js';
 
 const router = express.Router();
 
-router.post('/plan-trip', async (req, res, next) => {
+router.post('/api/trips', async (req, res, next) => {
     try{
-        console.log("Received trip planning request:", { destination, start, vehicleType });
         const { destination, start, vehicleType } = req.body;
-        const results = await planTrip({destination, start, vehicleType});
+        console.log("Received trip planning request:", { destination, start, vehicleType });
+        const results = await planTrip({start, destination, vehicleType});
         return res.json({
-            distnace: results.distance,
+            distance: results.distance,
             duration: results.duration,
-            polyline: results.OverviewPolyline,
+            polyline: results.polyline,
             stops: results.stops,
         });
     } catch (error){

@@ -1,16 +1,9 @@
-import express, { app } from 'express';
-import { useEffect, useState } from 'react';
 import dotenv from 'dotenv';
-
+dotenv.config();
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-app.use(express.json());
 
 /*Bring the destination and starting point from Dashboard.jsx to googlemapsfunctions.js to get the coordinates*/
-app.post('/api/trips/plan-trip', async (req, res) => {
-    const { destination, start, carType } = req.body; 
-    console.log("Received trip planning request:", { destination, start, carType });
-    res.json({ok: true})
-});
+
 
 function distanceKm(p1,p2){
     const R = 6371; // Radius of the Earth in kilometers
@@ -33,8 +26,8 @@ function RecommendedStops(distance){
 //Get the base route for point A to point B
 async function getRoute(startCoords, destCoords, ){
     const Params = new URLSearchParams({
-        origin,
-        destination,
+        startCoords,
+        destCoords,
         mode : 'driving',
         key: GOOGLE_MAPS_API_KEY,
     });
@@ -93,7 +86,7 @@ function RouteStops(route, invtervalKm = 50){
         accumulatedDistance += distKm;
     }
     const totalstops = stops.length;
-    return stops,map((p,idx) => ({
+    return stops.map((p,idx) => ({
         ...p, positionOnRoute: totalstops > 1? idx / (totalstops -1) : 0,}));
 }
 //Search for places near each stop
@@ -137,25 +130,34 @@ function filterUniquePlaces(places){
 }
 
 //choose best places based on rating and user reviews
-function selectTopPlaces(places, maxPlaces = 5){
-    const {rating, userRatingsTotal} = place;
-    const capReviews = Math.min(userRatingsTotal, 2000);
-    return 2.0 * rating + 0.003 * capReviews;
+function scorePlace(place) {
+  const rating = place.rating ?? 0;
+  const userRatingsTotal = place.userRatingsTotal ?? 0;
+  const capReviews = Math.min(userRatingsTotal, 2000);
+  return 2.0 * rating + 0.003 * capReviews;
 }
 // chose the top places
-function selectTopPlaces(places, stops, spacing = 0.15){
-    if (stops <= 0) return [];
-    const sortedPlaces = [...places].sort((a,b) => selectTopPlaces(b) - selectTopPlaces(a));
-    const selectedPlaces = [];
-    for (const place of sortedPlaces){
-        if (selectedPlaces.length >= stops) break;
-        const GoodDistance = selectedPlaces.every(s=> Math.abs(s.positionOnRoute - place.positionOnRoute) >= spacing);
-        if (GoodDistance){
-            selectedPlaces.push (place);
+
+function pickTopPlaces(places, maxPlaces, spacing = 0.15) {
+    if (maxPlaces <= 0) return [];
+
+    const sorted = [...places].sort((a, b) => scorePlace(b) - scorePlace(a));
+    const selected = [];
+
+    for (const place of sorted) {
+        if (selected.length >= maxPlaces) break;
+
+        const farEnough = selected.every(
+            (s) => Math.abs(s.positionOnRoute - place.positionOnRoute) >= spacing
+        );
+
+        if (farEnough) {
+        selected.push(place);
         }
     }
-    return selectedPlaces;
+    return selected;
 }
+
 
 
 //Main function to plan the trip
@@ -176,7 +178,7 @@ export async function planTrip (start, destination, vehicleType){
     const PlacesResults = await Promise.all (PlacesPromises);
     const allPlaces = PlacesResults.flat();
     const uniquePlaces = filterUniquePlaces (allPlaces);
-    const selectedPlaces = selectTopPlaces (uniquePlaces, routeStops, 0.15);
+    const selectedPlaces = pickTopPlaces (uniquePlaces, routeStops, 0.15);
     return {
         distance,
         duration,
