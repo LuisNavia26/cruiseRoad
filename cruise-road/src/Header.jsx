@@ -1,5 +1,4 @@
-import{ use, useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Dashboard from "./Dashboard";
 
 function Header() {
@@ -43,7 +42,7 @@ function Header() {
 
                 }
             }catch (error){
-                
+                console.error(error);
                 setsuccessReg (false);
                 setErrorMsg ("An error occurred during registration. Please try again later.");
 
@@ -76,6 +75,7 @@ function Header() {
                     setErrorMsg ("Invalid credentials. Please try again.");
                 }
             }catch (error){
+                console.error(error);
                 setErrorMsg ("An error occurred during login. Please try again later.");
             }
         }else{

@@ -12,6 +12,12 @@
   },
   "dependencies": {
     "@react-google-maps/api": "^2.20.7",
-    "@vis.gl/react-google-maps": "^1.7.1"
+    "@vis.gl/react-google-maps": "^1.7.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "resolutions": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }
