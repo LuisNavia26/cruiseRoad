@@ -24,10 +24,10 @@ function RecommendedStops(distance){
 }
 
 //Get the base route for point A to point B
-async function getRoute(startCoords, destCoords, ){
+async function getRoute(origin, destination, ){
     const Params = new URLSearchParams({
-        startCoords,
-        destCoords,
+        origin,
+        destination,
         mode : 'driving',
         key: GOOGLE_MAPS_API_KEY,
     });
@@ -40,8 +40,8 @@ async function getRoute(startCoords, destCoords, ){
         if (data.status !== 'OK'){
             throw new Error (`Google Maps API error: ${data.status}`);
         }
-    const route = data.routes[0];
-    const leg =  route.legs[0];
+    const route         = data.routes[0];
+    const leg           =  route.legs[0];
     const totalDistance = leg.distance.value / 1000; // in km
     const totalDuration = leg.duration.value / 60; // in minutes
 
@@ -94,8 +94,8 @@ async function getPlaces(stop){
     const {lat, lng} = stop;
     const Params = new URLSearchParams({
         location: `${lat},${lng}`,
-        radius: 5000, // 5 km radius
-        type: 'national park OR State Park OR Historic Site',
+        radius: 50000, // 50 km radius
+        keyword: 'national park OR State Park OR Historic Site',
         key: GOOGLE_MAPS_API_KEY,
     });
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?${Params.toString()}`;
@@ -161,8 +161,8 @@ function pickTopPlaces(places, maxPlaces, spacing = 0.15) {
 
 
 //Main function to plan the trip
-export async function planTrip (start, destination, vehicleType){
-    const baseRoute = await getRoute (start, destination);
+export async function planTrip ({start, destination, vehicleType}){
+    const baseRoute = await getRoute(start, destination);
     const {distance, duration, stops, OverviewPolyline} = baseRoute;
     const routeStops = RecommendedStops (distance);
     if (routeStops == 0){

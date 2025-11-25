@@ -24,6 +24,7 @@ function Dashboard({user, isLogOut}) {
     const [menu, setOpenMenu] = useState (false);
     const [profile, setProfile] = useState(false);
     const [tripStarted, setTripStarted] = useState(false);
+    const [stops, setStops] = useState([]);
     const [formData, setFormData] = useState({
         destination: "",
         start: "",
@@ -49,10 +50,15 @@ function Dashboard({user, isLogOut}) {
                         vehicleType: CarType,
                     }),
                 });
-                const tripData = await res.json();
+                const tripData = await res.json().catch(() => null);
                 if (res.ok){ 
                     console.log("Trip planned successfully:", tripData);
                     setErrorMsg ("");
+                    if (tripData?.stops && Array.isArray(tripData.stops)){
+                        setStops(tripData.stops);
+                    }else {
+                        setStops([]);
+                    }
                     // Request directions
                     if (isLoaded && window.google) {
                         const directionsService = new window.google.maps.DirectionsService();
@@ -61,6 +67,7 @@ function Dashboard({user, isLogOut}) {
                                 origin: formData.start,
                                 destination: formData.destination,
                                 travelMode: window.google.maps.TravelMode.DRIVING,
+                                //If we decide to add the stops in the route we add them here
                             },
                             (result, status) => {
                                 console.log("Directions status:", status);
@@ -195,10 +202,12 @@ function Dashboard({user, isLogOut}) {
             mapContainerStyle={containerStyle} 
             center={center} 
             zoom={10}>
-            {directions && (
-                <DirectionsRenderer directions={directions} />
-            )}
+            {directions && <DirectionsRenderer directions={directions} />}
             <Marker position={center} />
+            {stops.map((stop, index) => {
+                const position = stop.location ? { lat: stop.location.lat, lng: stop.location.lng } : { lat: stop.lat, lng: stop.lng };
+                return <Marker key={stop.placeId || index} position={position} />;
+            })}
         </GoogleMap>
       )}
             </div>
