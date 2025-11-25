@@ -3,7 +3,7 @@ import {planTrip} from '../Services/googlemapsfunctions.js';
 
 const router = express.Router();
 
-router.post('/api/trips', async (req, res, next) => {
+router.post('/plan', async (req, res, next) => {
     try{
         const { destination, start, vehicleType } = req.body;
         console.log("Received trip planning request:", { destination, start, vehicleType });
