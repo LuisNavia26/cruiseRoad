@@ -21,6 +21,12 @@ function Header() {
             formData.username.trim() &&
             formData.password.trim()
         ){
+            if (formData.password.length < 8) {
+                setsuccessReg(false);
+                setErrorMsg("Password must be at least 8 characters long.");
+                return;
+            }
+
             try{
                 const res = await fetch ("/api/users/register", {
                     method: "POST",

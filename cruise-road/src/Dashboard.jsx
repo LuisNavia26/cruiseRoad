@@ -131,7 +131,7 @@ function Dashboard({user, isLogOut}) {
                 borderRadius: "6px"}}
                 >
                 Welcome, {user.username}!</h1>
-            <div style={{ textAlign:"center", display: "inline-block",backgroundColor: "rgba(255, 255, 255, 0.88)",color: "black",padding: "10px 15px",borderRadius: "6px",}}>
+            <div style={{ textAlign:"center", display: "inline-block",backgroundColor: "rgba(255, 255, 255, 0.88)",color: "black",padding: "8px 15px",borderRadius: "6px",}}>
                 <h2>Plan your next road trip!</h2>
             </div>
 
@@ -225,12 +225,15 @@ function Dashboard({user, isLogOut}) {
                 setErrorMsg("");
             }}
             style={{
-                 marginTop:"600px",
-                 right:"43.5%",
-                 textAlign:"center", 
-                 display: "inline-block",
-                 backgroundColor: "rgba(8, 114, 41, 0.88)",
-                 borderRadius: "6px",
+                position: "absolute",
+                top: "93%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                backgroundColor: "rgba(8, 114, 41, 0.88)",
+                borderRadius: "8px",
+                padding: "8px 12px",
+                width: "max-content",
+                display: "inline-block",
                 cursor: "pointer",}}
             >
                 Start Planning Here!
