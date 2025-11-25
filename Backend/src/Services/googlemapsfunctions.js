@@ -24,10 +24,10 @@ function RecommendedStops(distance){
 }
 
 //Get the base route for point A to point B
-async function getRoute(startCoords, destCoords, ){
+async function getRoute(origin, destination, ){
     const Params = new URLSearchParams({
-        startCoords,
-        destCoords,
+        origin,
+        destination,
         mode : 'driving',
         key: GOOGLE_MAPS_API_KEY,
     });
@@ -53,7 +53,7 @@ async function getRoute(startCoords, destCoords, ){
     };
 }
 // Determine stops along the route at specified intervals
-function RouteStops(route, invtervalKm = 50){
+function RouteStops(route, intervalKm = 50){
     const stops = [];
     let accumulatedDistance = 0;
     let nextStopDistance = 0;
@@ -75,13 +75,13 @@ function RouteStops(route, invtervalKm = 50){
         if (stops.length === 0){
             stops.push({...start, positionOnRoute: 0});
         }
-        while (accumulatedDistance + distKm >= nextStopDistance + invtervalKm){
-            const remaininingDist = nextStopDistance + invtervalKm - accumulatedDistance;
+        while (accumulatedDistance + distKm >= nextStopDistance + intervalKm){
+            const remaininingDist = nextStopDistance + intervalKm - accumulatedDistance;
             const ratio = remaininingDist / distKm;
             const Slat = start.lat + ratio * (end.lat - start.lat);
             const Slng = start.lng + ratio * (end.lng - start.lng);
             stops.push({lat:Slat, lng: Slng});
-            nextStopDistance += invtervalKm;
+            nextStopDistance += intervalKm;
         }
         accumulatedDistance += distKm;
     }
@@ -95,7 +95,7 @@ async function getPlaces(stop){
     const Params = new URLSearchParams({
         location: `${lat},${lng}`,
         radius: 5000, // 5 km radius
-        type: 'national park OR State Park OR Historic Site',
+        keyword: 'national park OR State Park OR Historic Site',
         key: GOOGLE_MAPS_API_KEY,
     });
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?${Params.toString()}`;
@@ -174,7 +174,7 @@ export async function planTrip (start, destination, vehicleType){
         };
     }
     const SampleStops = RouteStops(stops, 50); // get stops every 50 km
-    const PlacesPromises = SampleStops.map(p=> getPlaces(p));
+    const PlacesPromises = SampleStops.map((p)=> getPlaces(p));
     const PlacesResults = await Promise.all (PlacesPromises);
     const allPlaces = PlacesResults.flat();
     const uniquePlaces = filterUniquePlaces (allPlaces);
