@@ -95,7 +95,7 @@ async function getPlaces(stop){
     const Params = new URLSearchParams({
         location: `${lat},${lng}`,
         radius: 50000, // 50 km radius
-        keyword: 'national park OR State Park OR Historic Site',
+        keyword: 'national park OR State Park OR Historic Sites OR ',
         key: GOOGLE_MAPS_API_KEY,
     });
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?${Params.toString()}`;
