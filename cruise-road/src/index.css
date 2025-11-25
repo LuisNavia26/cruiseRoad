@@ -81,6 +81,7 @@ h1 {
   width: 300px;
   min-height: 200px;
   text-align: center;
+  position: relative;
 }
 footer{
   text-align: center;

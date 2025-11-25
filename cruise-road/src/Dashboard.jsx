@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { GoogleMap, useJsApiLoader, Marker, DirectionsRenderer } from '@react-google-maps/api';
 import Profile from "./Profile.jsx";
+import SavedTrips from "./SavedTrips.jsx";
 
 const containerStyle = {
     width: '35%',
@@ -25,6 +26,7 @@ function Dashboard({user, isLogOut}) {
     const [profile, setProfile] = useState(false);
     const [tripStarted, setTripStarted] = useState(false);
     const [stops, setStops] = useState([]);
+    const [showSavedTrips, setSavedTrips] = useState(false);
     const [formData, setFormData] = useState({
         destination: "",
         start: "",
@@ -113,7 +115,9 @@ function Dashboard({user, isLogOut}) {
                     <a className="menuItem" href="/profile"onClick={(e) => {e.preventDefault();setProfile(true);setOpenMenu(false);}}>
                         Profile
                     </a>
-                    <a className="menuItem" href="/saved-trips">Saved Trips</a>
+                    <a className="menuItem" href="/saved-trips" onClick={(e) => {e.preventDefault(); setSavedTrips(true); setOpenMenu(false);}}>
+                        Saved Trips
+                    </a>
                     <a className="menuItem" href="#" onClick={(e) => {e.preventDefault();isLogOut();}}>
                         Log Out
                     </a>
@@ -235,6 +239,9 @@ function Dashboard({user, isLogOut}) {
             </div>
         {profile && (
             <Profile user={user} closeWindow={() => setProfile(false)} />
+        )}
+        {showSavedTrips && (
+            <SavedTrips user={user} closeWindow={() => setSavedTrips(false)} />
         )}
 
             {/* Pop up for Planning Trip */}

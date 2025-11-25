@@ -25,8 +25,8 @@ function Profile({user, closeWindow}) {
         </button>
 
         <h2>👤 Your Profile</h2>
-        <p><b>First Name:</b> {user.firstname}</p>
-        <p><b>Last Name:</b> {user.lastname}</p>
+        {/* <p><b>First Name:</b> {user.firstname}</p>
+        <p><b>Last Name:</b> {user.lastname}</p> */}
         <p><b>Username:</b> {user.username}</p>
         <p><b>Password: </b>******** </p>
         <div style={{display: "flex", gap: "10px"}}>
