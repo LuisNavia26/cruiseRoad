@@ -13,6 +13,7 @@ router.post('/plan', async (req, res, next) => {
             duration: results.duration,
             polyline: results.polyline,
             stops: results.stops,
+            PriceEstimate: results.PriceEstimate,
         });
     } catch (error){
         console.error('Error in /api/trips/plan:', error);
