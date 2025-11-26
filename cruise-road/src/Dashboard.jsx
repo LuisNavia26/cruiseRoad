@@ -27,6 +27,7 @@ function Dashboard({user, isLogOut}) {
     const [tripStarted, setTripStarted] = useState(false);
     const [stops, setStops] = useState([]);
     const [showSavedTrips, setSavedTrips] = useState(false);
+    const [Spending, setSpending] = useState("");
     const [formData, setFormData] = useState({
         destination: "",
         start: "",
@@ -41,7 +42,7 @@ function Dashboard({user, isLogOut}) {
     /*Handling trip planning submission*/
     const handleSub = async(e)=>{
         e.preventDefault();
-        if (formData.destination.trim() && formData.start.trim() && CarType){
+        if (formData.destination.trim() && formData.start.trim() && CarType != ""){
             try{
                 const res = await fetch ("/api/trips/plan", {
                     method: "POST",
@@ -52,12 +53,15 @@ function Dashboard({user, isLogOut}) {
                         vehicleType: CarType,
                     }),
                 });
+                setShowPopUp(false);
+                setTripStarted(true);
                 const tripData = await res.json().catch(() => null);
                 if (res.ok){ 
                     console.log("Trip planned successfully:", tripData);
                     setErrorMsg ("");
                     if (tripData?.stops && Array.isArray(tripData.stops)){
                         setStops(tripData.stops);
+                        setSpending(tripData.PriceEstimate);
                     }else {
                         setStops([]);
                     }
@@ -100,8 +104,6 @@ function Dashboard({user, isLogOut}) {
             }else{
                 setErrorMsg ("All fields are required. Please fill in all fields." );
             }
-        setShowPopUp(false);
-        setTripStarted(true);
     };
     return (
         <>
@@ -142,9 +144,10 @@ function Dashboard({user, isLogOut}) {
                     <div style={{
                         position: 'absolute',
                         left: '10px',
-                        top: '0',
-                        width: '200px',
-                        height: '350px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        width: '330px',
+                        maxHeight: '500px',
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
                         backdropFilter: 'blur(5px)',
                         borderRadius: '8px',
@@ -159,6 +162,24 @@ function Dashboard({user, isLogOut}) {
                             <p style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '12px' }}>FROM:</p>
                             <p style={{ margin: '0', fontSize: '13px', color: '#ccc' }}>{formData.start}</p>
                         </div>
+                        {/*Stop Descriptions*/}
+                        {stops.length > 0 && (
+                            <> 
+                            {stops.map((stop, index) => (
+                                <div key = {stop.placeId || index} style={{ marginBottom: '10px' }}>
+                                    <p style = {{ fontWeight: 'bold', margin: '0 0 3px 0', fontSize: '12px' }}>
+                                        Stop {index + 1}: {stop.name || 'Unnamed Location'}
+                                    </p>
+                                    {stop.description && (
+                                        <p style={{ margin: '0', fontSize: '11px', color: '#ddd', whiteSpace: 'pre-wrap' }}>
+                                            {stop.description}
+                                        </p>
+                                    )}
+                                </div>
+                                
+                            ))}
+                            </>
+                        )}
                         <div style={{ marginBottom: '15px' }}>
                             <p style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '12px' }}>TO:</p>
                             <p style={{ margin: '0', fontSize: '13px', color: '#ccc' }}>{formData.destination}</p>
@@ -172,8 +193,8 @@ function Dashboard({user, isLogOut}) {
                             <label style={{ fontSize: '10px', color: '#ccc' }}> {distance || "Caclulating..."}</label>
                         </div>
                         <div style={{ marginBottom: '0' }}>
-                            <label style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '10px', width:'0' }}>ESTIMATED GAS SPENDING:</label>
-                            <label style={{ fontSize: '10px', color: '#ccc' }}> XXX$</label>
+                            <label style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '10px', width:'0' }}>ESTIMATED FUEL/CHARGE SPENDING:</label>
+                            <label style={{ fontSize: '10px', color: '#ccc' }}> {Math.ceil(Spending) || "Calculating..."}</label>
                         </div><br />
                         <hr style={{ borderColor: 'rgba(255, 255, 255, 0.3)', margin: '15px 0' }} />
                         <button 
@@ -187,7 +208,6 @@ function Dashboard({user, isLogOut}) {
                                 borderRadius: '10px',
                                 cursor: 'pointer',
                                 fontSize: '12px',
-                                marginTop: '320px'
                             }}
                         >
                             Close Menu
@@ -207,7 +227,6 @@ function Dashboard({user, isLogOut}) {
             center={center} 
             zoom={10}>
             {directions && <DirectionsRenderer directions={directions} />}
-            <Marker position={position} />
             {stops.map((stop, index) => {
                 const position = stop.location ? { lat: stop.location.lat, lng: stop.location.lng } : { lat: stop.lat, lng: stop.lng };
                 return <Marker key={stop.placeId || index} position={position} />;
