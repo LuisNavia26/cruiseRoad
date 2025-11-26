@@ -24,7 +24,7 @@ function RecommendedStops(distance){
 }
 
 //Get the base route for point A to point B
-async function getRoute(origin, destination, ){
+async function getRoute(origin, destination){
     const Params = new URLSearchParams({
         origin,
         destination,
@@ -94,8 +94,8 @@ async function getPlaces(stop){
     const {lat, lng} = stop;
     const Params = new URLSearchParams({
         location: `${lat},${lng}`,
-        radius: 50000, // 50 km radius
-        keyword: 'national park OR State Park OR Historic Sites OR ',
+        radius: 50000, // 31.1 mi radius max allowed
+        keyword: 'national park State Park Historic Sites Museum Destillery',
         key: GOOGLE_MAPS_API_KEY,
     });
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?${Params.toString()}`;
@@ -166,11 +166,13 @@ export async function planTrip ({start, destination, vehicleType}){
     const {distance, duration, stops, OverviewPolyline} = baseRoute;
     const routeStops = RecommendedStops (distance);
     if (routeStops == 0){
+        const PriceEstimate = GasEstimate(distance, vehicleType);
         return {
             distance,
             duration,
             polyline: OverviewPolyline,
             stops: [],
+            PriceEstimate,
         };
     }
     const SampleStops = RouteStops(stops, 50); // get stops every 50 km
@@ -179,10 +181,76 @@ export async function planTrip ({start, destination, vehicleType}){
     const allPlaces = PlacesResults.flat();
     const uniquePlaces = filterUniquePlaces (allPlaces);
     const selectedPlaces = pickTopPlaces (uniquePlaces, routeStops, 0.15);
+    const PriceEstimate = GasEstimate (distance, vehicleType);
+    const detailedPlaces = await Promise.all(
+        selectedPlaces.map(async (place) => {
+            try{
+                const details = await getPlaceDetails(place.placeId);
+                return {
+                    ...place,
+                    description: details?.description || '',
+                };  
+            }
+            catch (error){
+                console.error('Error fetching place details:', error);
+                return {place,description: ""}; // return place without description on error
+            }
+        })
+    );
     return {
         distance,
         duration,
         polyline: OverviewPolyline,
-        stops: selectedPlaces,
+        stops: detailedPlaces,
+        PriceEstimate
+    };
+}
+
+function GasEstimate(distance, vehicleType){
+    const vehicleEfficiency = {
+        'SUV': 27, // mpg
+        'Sports Car': 30, // mpg
+        'Truck': 22, // mpg
+        'Minivan': 25, // mpg
+        'Electric': 300, // miles per full charge (approximation)
+        'Hybrid': 50, // mpg
+        'Motorcycle': 60, // mpg
+        'RV': 11.6, // mpg
+    }
+    if (vehicleType != 'Electric'){
+        const mpg = vehicleEfficiency[vehicleType];
+        const gallonsNeeded = distance * 0.621371 / mpg; // convert km to miles
+        const averageGasPricePerGallon = 3.50;
+        return gallonsNeeded * averageGasPricePerGallon;
+    } else { // Electric vehicle
+        const milesNeeded = distance * 0.621371; // convert km to miles
+        const stopsNeeded = milesNeeded / vehicleEfficiency['Electric'];
+        const costPerCharge = 20.00; // average cost per full charge
+        return stopsNeeded * costPerCharge;
+    }
+
+}
+
+async function getPlaceDetails(placeId){
+    const Params = new URLSearchParams({
+        place_id: placeId,
+        key: GOOGLE_MAPS_API_KEY,
+        fields: 'place_id,name,editorial_summary,reviews',
+    });
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?${Params.toString()}`;
+    const response = await fetch (url);
+    if (!response.ok){
+        throw new Error (`Failed to fetch place details from Google Places API : ${response.status}`);
+    }
+    const data = await response.json();
+    const place = data.result;
+    if(!place){
+        return null;
+    }
+    const description = place.editorial_summary?.overview || place.reviews?.[0]?.text || '';
+    return {
+        placeId :place.place_id,
+        name: place.name,
+        description,
     };
 }
