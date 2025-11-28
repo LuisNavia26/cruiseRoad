@@ -32,7 +32,7 @@ function Dashboard({user, isLogOut}) {
         destination: "",
         start: "",
     });
-    const position = { lat: 29.65, lng: -82.35 }; // Example coordinates (Gainesville, FL)
+    // const position = { lat: 29.65, lng: -82.35 }; // Example coordinates (Gainesville, FL)
     const { isLoaded, loadError} = useJsApiLoader({
         id: 'gmaps-script',
         googleMapsApiKey:import.meta.env.VITE_GOOGLE_MAPS_API_KEY
@@ -49,7 +49,7 @@ function Dashboard({user, isLogOut}) {
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({
                         destination: formData.destination,
-                        start      : formData.start,
+                        start: formData.start,
                         vehicleType: CarType,
                     }),
                 });
@@ -104,6 +104,32 @@ function Dashboard({user, isLogOut}) {
             }else{
                 setErrorMsg ("All fields are required. Please fill in all fields." );
             }
+    };
+    const saveATrip = async () => {
+        try {
+            const res = await fetch("/api/trips/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    username: user.username,
+                    start: formData.start,
+                    destination: formData.destination,
+                    vehicleType: CarType,
+                    distance: distance,
+                    estimatedSpending: Spending,
+                    stops: stops
+                }),
+            });
+            const saveTripData = await res.json();
+            if (res.ok) {
+                alert("Trip saved successfully!");
+            } else {
+                setErrorMsg(saveTripData.message || "Failed to save trip.");
+            }
+        } catch (error) {
+            console.error("Error saving trip:", error);
+            setErrorMsg("An error occurred while saving the trip. Please try again later.");
+        }
     };
     return (
         <>
@@ -197,20 +223,11 @@ function Dashboard({user, isLogOut}) {
                             <label style={{ fontSize: '10px', color: '#ccc' }}> {Math.ceil(Spending) || "Calculating..."}</label>
                         </div><br />
                         <hr style={{ borderColor: 'rgba(255, 255, 255, 0.3)', margin: '15px 0' }} />
-                        <button 
-                            onClick={() => setTripStarted(false)}
-                            style={{
-                                width: '83%',
-                                padding: '8px 12px',
-                                backgroundColor: 'rgba(255, 255, 255, 0)',
-                                color: 'white',
-                                border: '1px solid rgba(255, 255, 255, 0.4)',
-                                borderRadius: '10px',
-                                cursor: 'pointer',
-                                fontSize: '12px',
-                            }}
-                        >
+                        <button className= "planningButton" onClick={() => setTripStarted(false)}>
                             Close Menu
+                        </button>
+                        <button className="planningButton" onClick={saveATrip}>
+                            Save Trip Info                          
                         </button>
                     </div>
                 )}

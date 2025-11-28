@@ -259,3 +259,66 @@ button:focus-visible {
   border-radius: 6px;
   cursor: pointer;
 }
+
+.savedTripItem{
+  border-bottom: 1px solid #ccc;
+  padding: 10px 6px;
+  display: block;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.planningButton{
+  width: 83%;
+  padding: 8px 12px;
+  background-color: rgba(255, 255, 255, 0);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.savedTripButton{
+  display: flex;
+  width: 83%;
+  padding: 4px 8px;
+  background-color: rgba(0, 102, 255, 0.4);
+  color: white;
+  border: 1px solid rgba(0, 102, 255, 0.4);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.tripDetails {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.nestedPopUp {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  min-height: 200px;
+  text-align: center;
+  position: relative;
+  width: 90%;   
+  max-width: 500px;  
+  max-height: 80vh;
+  overflow-y: auto;
+  text-align: left;
+  word-break: break-word;
+}
