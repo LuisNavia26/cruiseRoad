@@ -123,7 +123,7 @@ function SavedTrips({user, closeWindow}) {
                         <p><strong>To:</strong> {selectedTrip.destination}</p>
                         <p><strong>Vehicle:</strong> {selectedTrip.vehicleType}</p>
                         <p><strong>Distance:</strong> {selectedTrip.distance}</p>
-                        <p><strong>Estimated Spending:</strong> ${selectedTrip.estimatedSpending}</p>
+                        <p><strong>Estimated Spending:</strong> ${Math.ceil(selectedTrip.estimatedSpending)}</p>
 
                          {selectedTrip.stops && selectedTrip.stops.length > 0 && (
                                 <>
