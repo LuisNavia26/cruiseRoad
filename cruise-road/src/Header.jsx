@@ -75,7 +75,14 @@ function Header() {
                 });
                 const infoData = await res.json();
                 if (res.ok){
-                    setUser ({username: infoData.user|| formData.username});
+                    // store token and user info on successful login
+                    setUser ({
+                        username: infoData.username || formData.username,
+                        token: infoData.token,
+                        id: infoData.id,
+                        firstname: infoData.firstname,
+                        lastname: infoData.lastname
+                    });
                     setErrorMsg ("");
                 }else{
                     setErrorMsg ("Invalid credentials. Please try again.");

@@ -8,7 +8,7 @@ const generateToken = (id) => {
   if (!process.env.JWT_SECRET) {
     throw Object.assign(new Error("JWT_SECRET missing"), { status: 500 });
   }
-  return jwt.sign({ sub: id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 //register
 router.post('/register', async (req, res, next) => {
@@ -61,7 +61,6 @@ router.post('/login', async (req, res, next) => {
             token,
         });
     } catch(err){
-        //res.status(500).json({message: "server error"});
         return next(err);
     }
 });
@@ -69,6 +68,44 @@ router.post('/login', async (req, res, next) => {
 //me
 router.get("/me", protect, async (req, res) => {
     res.status(200).json(req.user)
+});
+
+//change password
+router.post("/change-password", protect, async (req, res, next) => {
+    const { oldPassword, newPassword } = req.body;
+    if (!oldPassword || !newPassword){
+        return res.status(400).json({message: "Please fill out all the fields"});
+    }
+    if(newPassword.length < 8){
+        return res.status(400).json({message: "Password must be at least 8 characters"});
+    }
+    try{
+        if (!req.user) {
+            return res.status(401).json({ message: "not authorized" });
+        }
+        const user = await User.findById(req.user._id);
+        if (!(await user.matchPassword(oldPassword))){
+            return res.status(401).json({message: "Wrong Old Password"});
+        }
+        user.password = newPassword;
+        await user.save();
+        res.status(200).json({message: "Password changed successfully"});
+    } catch(err){
+        res.status(500).json({message: "Server error"});
+    }
+});
+
+//delete account
+router.delete("/delete-account", protect, async (req, res, next) => {
+    try{
+        if (!req.user) {
+            return res.status(401).json({ message: "not authorized" });
+        }
+        await User.findByIdAndDelete(req.user._id);
+        res.json({message: "Account deleted successfully"});
+    } catch(err){
+        res.status(500).json({message: "Server error"});
+    }
 });
 
 

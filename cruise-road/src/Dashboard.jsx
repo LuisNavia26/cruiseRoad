@@ -277,7 +277,7 @@ function Dashboard({user, isLogOut}) {
             </div>   
             </div>
         {profile && (
-            <Profile user={user} closeWindow={() => setProfile(false)} />
+            <Profile user={user} closeWindow={() => setProfile(false)} onLogout={isLogOut} />
         )}
         {showSavedTrips && (
             <SavedTrips user={user} closeWindow={() => setSavedTrips(false)} />
