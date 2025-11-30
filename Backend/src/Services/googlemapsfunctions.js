@@ -2,8 +2,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
-/*Bring the destination and starting point from Dashboard.jsx to googlemapsfunctions.js to get the coordinates*/
-
 
 function distanceKm(p1,p2){
     const R = 6371; // Radius of the Earth in kilometers
