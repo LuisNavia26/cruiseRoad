@@ -322,3 +322,85 @@ button:focus-visible {
   text-align: left;
   word-break: break-word;
 }
+
+.inputs{
+  padding: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+  color: white;
+  background-color: #333;
+
+}
+
+.nestedPass{
+  background-image: url("https://images.ctfassets.net/3091ajzcmzlr/58tY50muYsuaOmeZ8170gE/571e2e7a0c189e65365629839178f76b/forgot-your-password");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  min-height: 200px;
+  text-align: center;
+  position: relative;
+  width: 90%;   
+  max-width: 500px;  
+  max-height: 80vh;
+  overflow-y: auto;
+  text-align: left;
+  word-break: break-word;
+ 
+  
+}
+
+
+.submitButton{
+  background-color:white;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  
+  
+}
+
+.nestedDeletePopUp {
+  /* background-color: #ff0000; */
+  background-image: url("https://st.depositphotos.com/64321598/56453/v/600/depositphotos_564536136-stock-video-stop-hand-sign-animation-entry.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 200px;
+  min-height: 200px;
+  text-align: center;
+  position: relative;
+  width: 90%;   
+  max-width: 500px;  
+  max-height: 80vh;
+  overflow-y: auto;
+  text-align: left;
+  word-break: break-word;
+}
+
+.deleteConfirm{
+  background-color:white;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 50%;
+
+}
