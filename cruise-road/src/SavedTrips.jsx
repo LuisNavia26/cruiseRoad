@@ -18,6 +18,7 @@ function SavedTrips({user, closeWindow}) {
                     setErrorMsg (data.message || "Failed to fetch saved trips.");
                 }
             } catch (err) { //adding checks for fetch errors
+                console.error('Fetch saved trips error:', err);
                 setErrorMsg("Error fetching saved trips, try again later.");
             } finally {
                 setLoading(false);
@@ -44,6 +45,7 @@ function SavedTrips({user, closeWindow}) {
             }
             setSavedTrips((prev) => prev.filter((trip) => trip._id !== tripId));
         } catch (err) {
+            console.error('Unfavorite trip error:', err);
             setErrorMsg("Error removing the trip, try again later.");
         }
     };
