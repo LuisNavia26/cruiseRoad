@@ -32,6 +32,7 @@ router.post('/register', async (req, res, next) => {
             firstname: user.firstname,
             lastname: user.lastname,
             username: user.username,
+            role: user.role,
         });
     } catch (err){
         if(err.code === 11000){
@@ -59,6 +60,7 @@ router.post('/login', async (req, res, next) => {
             id: user._id,
             username: user.username,
             token,
+            role: user.role,
         });
     } catch(err){
         return next(err);
@@ -108,6 +110,22 @@ router.delete("/delete-account", protect, async (req, res, next) => {
     }
 });
 
-
+router.post("/upgrade", protect, async (req, res, next) => {
+    try{
+        if (!req.user) {
+            return res.status(401).json({ message: "not authorized" });
+        }
+        const user = await User.findById(req.user._id);
+        if (user.role === 'pro'){
+            return res.status(400).json({message: "User is already a pro!"});
+        }
+        user.role = 'pro';
+        await user.save();
+        // return the updated role so frontend can update its state
+        res.status(200).json({message: "User upgraded to pro successfully", role: user.role});
+    } catch(err){
+        res.status(500).json({message: "Server error"});
+    }
+});
 
 export default router;

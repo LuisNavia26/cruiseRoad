@@ -21,3 +21,12 @@ export const protect = async (req, res, next) => {
     return res.status(401).json({message: "not authorized, token failed"})
 }
 
+export const ProAuth = (req, res, next) => {
+    if (!req.user){
+        return res.status(401).json({message: "not authorized"})
+    }
+    if (req.user.role !== 'pro'){
+        return res.status(403).json({message: "not authorized as a pro"})
+    }
+    next();
+}
