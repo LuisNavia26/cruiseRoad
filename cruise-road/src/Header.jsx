@@ -80,6 +80,7 @@ function Header() {
                         username: infoData.username || formData.username,
                         token: infoData.token,
                         id: infoData.id,
+                        role: infoData.role,
                         firstname: infoData.firstname,
                         lastname: infoData.lastname
                     });
@@ -113,7 +114,7 @@ function Header() {
         }
     }, [user]);
     if (user){
-        return <Dashboard user={user} isLogOut={handleOut} />;
+        return <Dashboard user={user} isLogOut={handleOut} onUserUpdate={(u) => setUser(u)} />;
     }
     return (
         <header>    

@@ -1,16 +1,59 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 
-function Profile({user, closeWindow, onLogout}) {
+function Profile({user, closeWindow, onLogout, onUserUpdate}) {
   const [showPass, setShowPass] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [oldPass, setOldPass] = useState("");
   const [newPass, setNewPass] = useState("");
   const [emsg, setEMsg] = useState("");
 
+  //upgrade to pro
+  const [role, setRole] = useState(user.role ?? "user");
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
+  const [upgradeMsg, setUpgradeMsg] = useState("");
+  useEffect(() => {
+    setRole(user.role);
+  }, [user.role]);
+
+  const handleUpgrade = async () => {
+    setUpgradeMsg("");
+    try {
+      setUpgradeLoading(true);
+      const response = await fetch("/api/users/upgrade", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        const newRole = data.role ?? 'pro';
+        setRole(newRole);
+        // inform parent about the new role if callback provided
+        if (typeof onUserUpdate === 'function') {
+          onUserUpdate({ ...user, role: newRole });
+        }
+        setUpgradeMsg("User upgraded to pro successfully");
+      } else {
+        setUpgradeMsg(data.message || "Error upgrading user");
+      }
+    } catch (error) {
+      console.error('Upgrade error:', error);
+      setUpgradeMsg("Server error");
+    } finally {
+      setUpgradeLoading(false);
+    }
+  };
+
+ 
   //changing password
   const handlePassChange = async () => {
     setEMsg("");
+
+
+
    
     try {
       const response = await fetch("/api/users/change-password", {
@@ -89,8 +132,47 @@ function Profile({user, closeWindow, onLogout}) {
         <h2>👤 Your Profile</h2>
         {/* <p><b>First Name:</b> {user.firstname}</p>
         <p><b>Last Name:</b> {user.lastname}</p> */}
-        <p><b>Username:</b> {user.username}</p>
-        <p><b>Password: </b>******** </p>
+        <p style={{ margin: "4px 0"}}><b>Username:</b> {user.username}</p>
+        <p style={{ margin: "4px 0"}}><b>Password:</b>******** </p>
+        <p style={{ margin: "4px 0"}}><b>Account Type:</b> {" "}{role === 'pro' ? "Pro User" : "Standard User"}</p>
+        {role !== "pro" && (
+          <div style={{ marginBottom: "10px" }}>
+            <button
+              className="upgradeButton"
+              onClick={handleUpgrade}
+              disabled={upgradeLoading}
+              style={{
+                marginBottom: "6px",
+                padding: "6px 10px",
+                borderRadius: "4px",
+                border: "none",
+                cursor: "pointer",
+                backgroundColor: "#f5b400",
+                color: "black",
+                fontWeight: "bold",
+              }}
+            >
+              {upgradeLoading ? "Upgrading..." : "Upgrade to Pro"}
+            </button>
+
+            {upgradeMsg && (
+              <p
+                style={{
+                  color: upgradeMsg.includes("success")
+                    ? "lightgreen"
+                    : "red",
+                  backgroundColor: "white",
+                  padding: "4px 6px",
+                  borderRadius: "4px",
+                  display: "inline-block",
+                  marginLeft: "8px",
+                }}
+              >
+                <b>{upgradeMsg}</b>
+              </p>
+            )}
+          </div>
+        )}
         <div style={{display: "flex", gap: "10px"}}>
             <button className = "passwordChangeButton"onClick={() =>setShowPass(true)}>Change Password</button>
             <button className = "deleteButton" onClick={() => setShowDelete(true)}><b>Delete Account</b></button>

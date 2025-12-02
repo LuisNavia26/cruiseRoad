@@ -16,7 +16,8 @@ const center = {
     lng: -82.3248
 };
 
-function Dashboard({user, isLogOut}) {
+function Dashboard({user, isLogOut, onUserUpdate}) {
+    const isPro = user?.role === "pro";
     const [directions, setDirections] = useState(null);
     const [distance, setDistance] = useState("");
     const [CarType, setCar] = useState("");
@@ -218,9 +219,14 @@ function Dashboard({user, isLogOut}) {
                             <label style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '10px', width:'0' }}>ESTIMATED DISTANCE:</label>
                             <label style={{ fontSize: '10px', color: '#ccc' }}> {distance || "Caclulating..."}</label>
                         </div>
+                        
                         <div style={{ marginBottom: '0' }}>
                             <label style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '10px', width:'0' }}>ESTIMATED FUEL/CHARGE SPENDING:</label>
-                            <label style={{ fontSize: '10px', color: '#ccc' }}> {Math.ceil(Spending) || "Calculating..."}</label>
+                            {isPro ? (
+                                <label style={{ fontSize: '10px', color: '#ccc' }}> {Math.ceil(Spending) || "Calculating..."}</label>
+                            ) : (
+                                <label style={{ fontSize: '10px', color: '#ccc' }}> Upgrade to Pro!</label>
+                            )}
                         </div><br />
                         <hr style={{ borderColor: 'rgba(255, 255, 255, 0.3)', margin: '15px 0' }} />
                         <button className= "planningButton" onClick={() => setTripStarted(false)}>
@@ -277,7 +283,7 @@ function Dashboard({user, isLogOut}) {
             </div>   
             </div>
         {profile && (
-            <Profile user={user} closeWindow={() => setProfile(false)} onLogout={isLogOut} />
+            <Profile user={user} closeWindow={() => setProfile(false)} onLogout={isLogOut} onUserUpdate={onUserUpdate} />
         )}
         {showSavedTrips && (
             <SavedTrips user={user} closeWindow={() => setSavedTrips(false)} />
