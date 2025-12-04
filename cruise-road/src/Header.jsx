@@ -108,7 +108,7 @@ function Header() {
     }
     useEffect (() => {
         if (user){
-            document.body.style.backgroundImage = "url('https://cdn.pixabay.com/photo/2020/10/11/09/04/peak-5645235_640.jpg')";
+            document.body.style.backgroundImage = "url('public/pictures/Mountain.jpg')";
         }else{
             document.body.style.backgroundImage = "url('https://static.vecteezy.com/system/resources/previews/032/512/591/non_2x/green-mountain-landscape-illustration-silhouette-of-mountain-range-with-clear-sky-mountain-landscape-for-background-wallpaper-or-landing-page-free-vector.jpg')";
         }
