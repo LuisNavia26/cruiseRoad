@@ -1,7 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
+
 function SavedTrips({user, closeWindow}) {
+    const isPro = user?.role === "pro";
     const [savedTrips, setSavedTrips] = useState([]);
     const [errorMsg, setErrorMsg] = useState("");
     const [loading, setLoading] = useState (true);
@@ -123,8 +125,9 @@ function SavedTrips({user, closeWindow}) {
                         <p><strong>To:</strong> {selectedTrip.destination}</p>
                         <p><strong>Vehicle:</strong> {selectedTrip.vehicleType}</p>
                         <p><strong>Distance:</strong> {selectedTrip.distance}</p>
-                        <p><strong>Estimated Spending:</strong> ${Math.ceil(selectedTrip.estimatedSpending)}</p>
-
+                        {isPro && (
+                            <p><strong>Estimated Spending:</strong> ${Math.ceil(selectedTrip.estimatedSpending)}</p>
+                        )}
                          {selectedTrip.stops && selectedTrip.stops.length > 0 && (
                                 <>
                                     <h4>Stops:</h4>
