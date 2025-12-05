@@ -108,7 +108,7 @@ function Header() {
     }
     useEffect (() => {
         if (user){
-            document.body.style.backgroundImage = "url('https://media1.thehungryjpeg.com/thumbs2/ori_3904105_10u1au3eu0qd98f16r4qhdwzs9u6pezwzy1kwpva_mountain-range-outline-nature-drawing-pencil-sketch-rocky-peaks-pano.jpg')";
+            document.body.style.backgroundImage = "url('public/pictures/Mountain.jpg')";
         }else{
             document.body.style.backgroundImage = "url('https://static.vecteezy.com/system/resources/previews/032/512/591/non_2x/green-mountain-landscape-illustration-silhouette-of-mountain-range-with-clear-sky-mountain-landscape-for-background-wallpaper-or-landing-page-free-vector.jpg')";
         }
