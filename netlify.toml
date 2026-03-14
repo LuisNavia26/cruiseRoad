@@ -1,5 +1,5 @@
 [build]
-  command = "npm --prefix cruise-road run build"
+  command = "npm --prefix cruise-road install && npm --prefix cruise-road run build"
   publish = "cruise-road/dist"
 
 [[redirects]]
