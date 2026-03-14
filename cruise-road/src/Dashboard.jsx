@@ -303,7 +303,7 @@ function Dashboard({user, isLogOut, onUserUpdate}) {
                 <div className={"popupOverlay"}>
                     <div className={"popupBox"}
                     style={{position: "relative",
-                        backgroundImage: "url('public/pictures/road.jpg')",
+                        backgroundImage: "url('/pictures/road.jpg')",
                         backgroundSize: "cover",
                         boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
                     }}>

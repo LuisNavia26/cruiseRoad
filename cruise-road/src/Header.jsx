@@ -135,7 +135,7 @@ function Header() {
     }
     useEffect (() => {
         if (user){
-            document.body.style.backgroundImage = "url('public/pictures/Mountain.jpg')";
+            document.body.style.backgroundImage = "url('/pictures/Mountain.jpg')";
             document.body.style.overflow = "auto";
         }else{
             document.body.style.backgroundImage = "none";
