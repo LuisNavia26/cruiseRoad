@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.post('/plan', async (req, res, next) => {
     try{
-        const { destination, start, vehicleType } = req.body;
-        console.log("Received trip planning request:", { destination, start, vehicleType });
-        const results = await planTrip({start, destination, vehicleType});
+        const { destination, start, vehicleType, stopTypes } = req.body;
+        console.log("Received trip planning request:", { destination, start, vehicleType, stopTypes });
+        const results = await planTrip({start, destination, vehicleType, stopTypes});
         return res.json({
             distance: results.distance,
             duration: results.duration,

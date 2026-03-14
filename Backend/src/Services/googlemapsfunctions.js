@@ -1,6 +1,27 @@
 import dotenv from 'dotenv';
 dotenv.config();
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+const defaultStopTypes = ['national-parks', 'historic-sites', 'restaurants'];
+const stopTypeKeywordMap = {
+    'national-parks': 'national park',
+    'state-parks': 'state park',
+    'historic-sites': 'historic site',
+    'museums': 'museum',
+    'bars': 'bar cocktail lounge pub brewery distillery',
+    'restaurants': 'restaurant diner cafe bistro',
+    'attractions': 'tourist attraction landmark point of interest',
+    'beaches': 'beach boardwalk waterfront',
+    'hiking': 'hiking trail trailhead nature preserve',
+    'campgrounds': 'campground rv park',
+    'scenic-lookouts': 'scenic overlook viewpoint observation deck',
+    'zoos-aquariums': 'zoo aquarium wildlife park',
+    'theme-parks': 'theme park amusement park water park',
+    'shopping': 'shopping mall market outlet boutique',
+    'coffee': 'coffee shop cafe roastery',
+    'live-music': 'live music music venue jazz club concert hall',
+    'art-galleries': 'art gallery arts center exhibition',
+    'botanical-gardens': 'botanical garden arboretum conservatory',
+};
 
 
 function distanceKm(p1,p2){
@@ -88,12 +109,20 @@ function RouteStops(route, invtervalKm = 50){
         ...p, positionOnRoute: totalstops > 1? idx / (totalstops -1) : 0,}));
 }
 //Search for places near each stop
-async function getPlaces(stop){
+function buildKeyword(stopTypes = defaultStopTypes){
+    const keywords = stopTypes
+        .map((stopType) => stopTypeKeywordMap[stopType])
+        .filter(Boolean);
+
+    return keywords.length > 0 ? keywords.join(' ') : defaultStopTypes.map((stopType) => stopTypeKeywordMap[stopType]).join(' ');
+}
+
+async function getPlaces(stop, stopTypes){
     const {lat, lng} = stop;
     const Params = new URLSearchParams({
         location: `${lat},${lng}`,
         radius: 50000, // 31.1 mi radius max allowed
-        keyword: 'national park State Park Historic Sites Museum Destillery',
+        keyword: buildKeyword(stopTypes),
         key: GOOGLE_MAPS_API_KEY,
     });
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?${Params.toString()}`;
@@ -159,7 +188,7 @@ function pickTopPlaces(places, maxPlaces, spacing = 0.15) {
 
 
 //Main function to plan the trip
-export async function planTrip ({start, destination, vehicleType}){
+export async function planTrip ({start, destination, vehicleType, stopTypes = defaultStopTypes}){
     const baseRoute = await getRoute(start, destination);
     const {distance, duration, stops, OverviewPolyline} = baseRoute;
     const routeStops = RecommendedStops (distance);
@@ -174,7 +203,7 @@ export async function planTrip ({start, destination, vehicleType}){
         };
     }
     const SampleStops = RouteStops(stops, 50); // get stops every 50 km
-    const PlacesPromises = SampleStops.map(p=> getPlaces(p));
+    const PlacesPromises = SampleStops.map((p) => getPlaces(p, stopTypes));
     const PlacesResults = await Promise.all (PlacesPromises);
     const allPlaces = PlacesResults.flat();
     const uniquePlaces = filterUniquePlaces (allPlaces);
@@ -195,11 +224,14 @@ export async function planTrip ({start, destination, vehicleType}){
             }
         })
     );
+    const orderedPlaces = [...detailedPlaces].sort(
+        (a, b) => (a.positionOnRoute ?? 0) - (b.positionOnRoute ?? 0)
+    );
     return {
         distance,
         duration,
         polyline: OverviewPolyline,
-        stops: detailedPlaces,
+        stops: orderedPlaces,
         PriceEstimate
     };
 }

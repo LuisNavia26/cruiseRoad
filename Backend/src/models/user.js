@@ -1,12 +1,38 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
+export const stopTypeOptions = [
+    'national-parks',
+    'state-parks',
+    'historic-sites',
+    'museums',
+    'bars',
+    'restaurants',
+    'attractions',
+    'beaches',
+    'hiking',
+    'campgrounds',
+    'scenic-lookouts',
+    'zoos-aquariums',
+    'theme-parks',
+    'shopping',
+    'coffee',
+    'live-music',
+    'art-galleries',
+    'botanical-gardens',
+];
+
 const userSchema = new mongoose.Schema({
     firstname: { type: String, required: true, trim: true },
     lastname:  { type: String, required: true, trim: true },
     username:  { type: String, required: true, unique: true, trim: true, lowercase: true, index: true },
     password:  { type: String, required: true },
-    role:      { type: String, enum: ['user', 'pro'], default: 'user' }
+    role:      { type: String, enum: ['user', 'pro'], default: 'user' },
+    preferredStopTypes: {
+        type: [String],
+        enum: stopTypeOptions,
+        default: ['national-parks', 'historic-sites', 'restaurants']
+    }
   }, {timestamps: true});
 
 userSchema.pre("save", async function(next){

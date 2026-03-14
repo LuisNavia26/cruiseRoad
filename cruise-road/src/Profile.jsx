@@ -1,12 +1,36 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 
+const stopTypeOptions = [
+  { value: "national-parks", label: "National Parks" },
+  { value: "state-parks", label: "State Parks" },
+  { value: "historic-sites", label: "Historic Sites" },
+  { value: "museums", label: "Museums" },
+  { value: "bars", label: "Bars" },
+  { value: "restaurants", label: "Restaurants" },
+  { value: "attractions", label: "Attractions" },
+  { value: "beaches", label: "Beaches" },
+  { value: "hiking", label: "Hiking Trails" },
+  { value: "campgrounds", label: "Campgrounds" },
+  { value: "scenic-lookouts", label: "Scenic Lookouts" },
+  { value: "zoos-aquariums", label: "Zoos and Aquariums" },
+  { value: "theme-parks", label: "Theme Parks" },
+  { value: "shopping", label: "Shopping" },
+  { value: "coffee", label: "Coffee Shops" },
+  { value: "live-music", label: "Live Music" },
+  { value: "art-galleries", label: "Art Galleries" },
+  { value: "botanical-gardens", label: "Botanical Gardens" },
+];
+
 function Profile({user, closeWindow, onLogout, onUserUpdate}) {
   const [showPass, setShowPass] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [oldPass, setOldPass] = useState("");
   const [newPass, setNewPass] = useState("");
   const [emsg, setEMsg] = useState("");
+  const [preferredStopTypes, setPreferredStopTypes] = useState(user.preferredStopTypes ?? []);
+  const [prefsMsg, setPrefsMsg] = useState("");
+  const [prefsSaving, setPrefsSaving] = useState(false);
 
   //upgrade to pro
   const [role, setRole] = useState(user.role ?? "user");
@@ -15,6 +39,42 @@ function Profile({user, closeWindow, onLogout, onUserUpdate}) {
   useEffect(() => {
     setRole(user.role);
   }, [user.role]);
+  useEffect(() => {
+    setPreferredStopTypes(user.preferredStopTypes ?? []);
+  }, [user.preferredStopTypes]);
+
+  const handlePreferencesSave = async () => {
+    setPrefsMsg("");
+    if (preferredStopTypes.length === 0) {
+      setPrefsMsg("Select at least one stop type");
+      return;
+    }
+    try {
+      setPrefsSaving(true);
+      const response = await fetch("/api/users/preferences", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ preferredStopTypes }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setPrefsMsg(data.message || "Error updating preferences");
+        return;
+      }
+      if (typeof onUserUpdate === "function") {
+        onUserUpdate({ ...user, preferredStopTypes: data.preferredStopTypes });
+      }
+      setPrefsMsg("Stop preferences updated");
+    } catch (error) {
+      console.error("Update preferences error:", error);
+      setPrefsMsg("Server error");
+    } finally {
+      setPrefsSaving(false);
+    }
+  };
 
   const handleUpgrade = async () => {
     setUpgradeMsg("");
@@ -107,8 +167,8 @@ function Profile({user, closeWindow, onLogout, onUserUpdate}) {
     }
   };
   return (
-    <div className="popupProfileOverlay">
-      <div className="popupProfileBox">
+    <div className="profilePage">
+      <div className="profilePageCard">
         {/* Close button */}
         <button
           type="button"
@@ -132,9 +192,50 @@ function Profile({user, closeWindow, onLogout, onUserUpdate}) {
         <h2>👤 Your Profile</h2>
         {/* <p><b>First Name:</b> {user.firstname}</p>
         <p><b>Last Name:</b> {user.lastname}</p> */}
-        <p style={{ margin: "4px 0"}}><b>Username:</b> {user.username}</p>
-        <p style={{ margin: "4px 0"}}><b>Password:</b>******** </p>
-        <p style={{ margin: "4px 0"}}><b>Account Type:</b> {" "}{role === 'pro' ? "Pro User" : "Standard User"}</p>
+        <div className="profileSummary">
+          <div className="profileSummaryTopRow">
+            <p style={{ margin: "4px 0" }}><b>Username:</b> {user.username}</p>
+            <div className="profileSummaryRightColumn">
+              <p style={{ margin: "4px 0" }}><b>Password:</b>******** </p>
+              <p className="accountTypeLine" style={{ margin: "4px 0", alignSelf: "flex-end", transform: "translateX(80px)" }}><b>Account Type:</b> {" "}{role === 'pro' ? "Pro User" : "Standard User"}</p>
+            </div>
+          </div>
+        </div>
+        <div className="profilePreferences">
+          <p style={{ margin: "12px 0 8px" }}><b>Preferred Stops:</b></p>
+          <div className="profileStopTypePanel">
+            {stopTypeOptions.map((option) => (
+              <label
+                key={option.value}
+                className={`profileStopTypeChip${preferredStopTypes.includes(option.value) ? " isSelected" : ""}`}
+              >
+                <input
+                  type="checkbox"
+                  className="stopTypeCheckbox"
+                  checked={preferredStopTypes.includes(option.value)}
+                  onChange={(e) => {
+                    setPreferredStopTypes((current) =>
+                      e.target.checked
+                        ? [...current, option.value]
+                        : current.filter((item) => item !== option.value)
+                    );
+                  }}
+                />
+                <span>{option.label}</span>
+              </label>
+            ))}
+          </div>
+          <div style={{ marginTop: "10px" }}>
+            <button className="passwordChangeButton" onClick={handlePreferencesSave} disabled={prefsSaving}>
+              {prefsSaving ? "Saving..." : "Save Stop Preferences"}
+            </button>
+          </div>
+          {prefsMsg && (
+            <p style={{ color: prefsMsg.includes("updated") ? "lightgreen" : "red", margin: "8px 0 0" }}>
+              <b>{prefsMsg}</b>
+            </p>
+          )}
+        </div>
         {role !== "pro" && (
           <div style={{ marginBottom: "10px" }}>
             <button

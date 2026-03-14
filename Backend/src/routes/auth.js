@@ -1,9 +1,16 @@
 import express from "express";
-import User from "../models/user.js";
+import User, { stopTypeOptions } from "../models/user.js";
 import { protect } from "../middleware/auth.js";
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
+const validStopTypes = new Set(stopTypeOptions);
+
+const sanitizeStopTypes = (preferredStopTypes) => {
+  if (!Array.isArray(preferredStopTypes)) return [];
+  return preferredStopTypes.filter((stopType) => validStopTypes.has(stopType));
+};
+
 const generateToken = (id) => {
   if (!process.env.JWT_SECRET) {
     throw Object.assign(new Error("JWT_SECRET missing"), { status: 500 });
@@ -15,9 +22,13 @@ router.post('/register', async (req, res, next) => {
     try{
         const firstname = req.body.firstname ?? req.body.firstName;
         const lastname  = req.body.lastname  ?? req.body.lastName;
-        let { username, password } = req.body;
+        let { username, password, preferredStopTypes } = req.body;
         if (!firstname || !lastname || !username || !password){
             return res.status(400).json({message: "please fill out all the fields"})
+        }
+        preferredStopTypes = sanitizeStopTypes(preferredStopTypes);
+        if (preferredStopTypes.length === 0){
+            return res.status(400).json({message: "please select at least one stop type"});
         }
         username = username.trim().toLowerCase();
         const userExists = await User.findOne({username});
@@ -26,13 +37,14 @@ router.post('/register', async (req, res, next) => {
             return res.status(409).json({message: "username already exists"})
         }
 
-        const user = await User.create({firstname, lastname, username, password});
+        const user = await User.create({firstname, lastname, username, password, preferredStopTypes});
         return res.status(201).json({
             id: user._id,
             firstname: user.firstname,
             lastname: user.lastname,
             username: user.username,
             role: user.role,
+            preferredStopTypes: user.preferredStopTypes,
         });
     } catch (err){
         if(err.code === 11000){
@@ -61,6 +73,9 @@ router.post('/login', async (req, res, next) => {
             username: user.username,
             token,
             role: user.role,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            preferredStopTypes: user.preferredStopTypes,
         });
     } catch(err){
         return next(err);
@@ -125,6 +140,30 @@ router.post("/upgrade", protect, async (req, res, next) => {
         res.status(200).json({message: "User upgraded to pro successfully", role: user.role});
     } catch(err){
         res.status(500).json({message: "Server error"});
+    }
+});
+
+router.put("/preferences", protect, async (req, res) => {
+    try{
+        if (!req.user) {
+            return res.status(401).json({ message: "not authorized" });
+        }
+        const preferredStopTypes = sanitizeStopTypes(req.body.preferredStopTypes);
+        if (preferredStopTypes.length === 0){
+            return res.status(400).json({ message: "please select at least one stop type" });
+        }
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ message: "user not found" });
+        }
+        user.preferredStopTypes = preferredStopTypes;
+        await user.save();
+        return res.status(200).json({
+            message: "Preferences updated successfully",
+            preferredStopTypes: user.preferredStopTypes,
+        });
+    } catch(err){
+        return res.status(500).json({message: "Server error"});
     }
 });
 

@@ -32,8 +32,3 @@ app.use((err, _req, res, _next) => { // This is to so we can see the real error 
     process.exit(1);
   }
 })();
-
-
-app.listen(PORT, () => {
-    console.log(`Server started at port ${PORT}`);
-});

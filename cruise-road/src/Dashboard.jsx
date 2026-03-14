@@ -40,6 +40,17 @@ function Dashboard({user, isLogOut, onUserUpdate}) {
     });
     console.log("API Loaded:", isLoaded, "Load Error:", loadError?.message);
 
+    if (profile) {
+        return (
+            <Profile
+                user={user}
+                closeWindow={() => setProfile(false)}
+                onLogout={isLogOut}
+                onUserUpdate={onUserUpdate}
+            />
+        );
+    }
+
     /*Handling trip planning submission*/
     const handleSub = async(e)=>{
         e.preventDefault();
@@ -52,6 +63,7 @@ function Dashboard({user, isLogOut, onUserUpdate}) {
                         destination: formData.destination,
                         start: formData.start,
                         vehicleType: CarType,
+                        stopTypes: user.preferredStopTypes ?? [],
                     }),
                 });
                 setShowPopUp(false);
@@ -282,9 +294,6 @@ function Dashboard({user, isLogOut, onUserUpdate}) {
             </button>
             </div>   
             </div>
-        {profile && (
-            <Profile user={user} closeWindow={() => setProfile(false)} onLogout={isLogOut} onUserUpdate={onUserUpdate} />
-        )}
         {showSavedTrips && (
             <SavedTrips user={user} closeWindow={() => setSavedTrips(false)} />
         )}
